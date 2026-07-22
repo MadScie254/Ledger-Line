@@ -38,6 +38,7 @@ enum JournalSourceType {
   MANUAL
   INVOICE
   BILL
+  EXPENSE
   PAYMENT
   PAYROLL
   BANK

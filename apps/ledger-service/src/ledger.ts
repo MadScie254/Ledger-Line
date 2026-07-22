@@ -140,15 +140,13 @@ export function calculateTrialBalance(accounts: Account[], entries: JournalEntry
   const balances = calculateAccountBalances(entries);
 
   return accounts.map((account) => {
-    const normalBalance = normalBalanceSign(account.type);
     const rawBalance = balances.get(account.id) ?? 0;
-    const signedBalance = rawBalance * normalBalance;
 
     return {
       account,
-      debitMinor: signedBalance >= 0 ? signedBalance : 0,
-      creditMinor: signedBalance < 0 ? Math.abs(signedBalance) : 0,
-      balanceMinor: signedBalance
+      debitMinor: rawBalance >= 0 ? rawBalance : 0,
+      creditMinor: rawBalance < 0 ? Math.abs(rawBalance) : 0,
+      balanceMinor: rawBalance
     };
   });
 }
@@ -195,14 +193,6 @@ export function buildProfitAndLoss(accounts: Account[], entries: JournalEntry[],
     grossProfitMinor: incomeMinor - cogsMinor,
     netProfitMinor: incomeMinor - cogsMinor - expenseMinor
   };
-}
-
-function normalBalanceSign(type: Account["type"]) {
-  if (type === "liability" || type === "equity" || type === "income") {
-    return -1;
-  }
-
-  return 1;
 }
 
 function createStableId(prefix: string, parts: string[]) {

@@ -8,6 +8,7 @@ export type JournalSourceType =
   | "manual"
   | "invoice"
   | "bill"
+  | "expense"
   | "payment"
   | "payroll"
   | "bank"

@@ -9,10 +9,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo dev --filter=@ledgerline/web",
-    "build": "turbo build",
-    "typecheck": "turbo typecheck",
-    "test": "turbo test",
+    "dev": "npm run dev -w @ledgerline/web",
+    "build": "npm run build -w @ledgerline/types && npm run build -w @ledgerline/ui && npm run build -w @ledgerline/ledger-service && npm run build -w @ledgerline/db && npm run build -w @ledgerline/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
     "test:ledger": "npm run test -w @ledgerline/ledger-service",
     "db:validate": "prisma validate --schema packages/db/prisma/schema.prisma",
     "db:seed": "tsx packages/db/prisma/seed.ts"
