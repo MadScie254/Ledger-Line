@@ -12,6 +12,6 @@
     "test": "echo \"@ledgerline/types has no tests yet\""
   },
   "devDependencies": {
-    "typescript": "workspace:*"
+    "typescript": "^5.7.2"
   }
 }
