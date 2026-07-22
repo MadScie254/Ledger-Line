@@ -15,7 +15,7 @@
     "@ledgerline/types": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "workspace:*",
-    "vitest": "workspace:*"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }
