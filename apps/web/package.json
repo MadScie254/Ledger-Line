@@ -10,9 +10,9 @@
     "test": "echo \"@ledgerline/web e2e tests are pending\""
   },
   "dependencies": {
-    "@ledgerline/ledger-service": "workspace:*",
-    "@ledgerline/types": "workspace:*",
-    "@ledgerline/ui": "workspace:*",
+    "@ledgerline/ledger-service": "0.1.0",
+    "@ledgerline/types": "0.1.0",
+    "@ledgerline/ui": "0.1.0",
     "@tanstack/react-query": "^5.62.8",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.15.0",
