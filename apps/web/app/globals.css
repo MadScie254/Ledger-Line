@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink-900: #0b1b33;
+  --ink-800: #122744;
+  --paper-50: #f6f5f1;
+  --paper-100: #edebe4;
+  --brass-500: #b8863b;
+  --brass-400: #c99b52;
+  --slate-700: #384253;
+  --slate-500: #5b6472;
+  --slate-300: #c8ced7;
+  --slate-200: #d9dee6;
+  --slate-100: #e7eaf0;
+  --ledger-green-700: #0f5132;
+  --rust-700: #a23e1d;
+  --rust-800: #7f2f17;
+  --focus-blue-500: #2c5eaa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--paper-50);
+  color: var(--ink-900);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(90deg, rgba(11, 27, 51, 0.035) 1px, transparent 1px) 0 0 / 76px 76px,
+    linear-gradient(180deg, rgba(11, 27, 51, 0.025) 1px, transparent 1px) 0 0 / 100% 28px,
+    var(--paper-50);
+  font-family: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(184, 134, 59, 0.28);
+}
+
+.double-rule {
+  height: 5px;
+  border-top: 1px solid rgba(91, 100, 114, 0.44);
+  border-bottom: 1px solid rgba(91, 100, 114, 0.44);
+}
+
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-ring:focus-visible {
+  outline-color: var(--focus-blue-500);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
