@@ -16,9 +16,9 @@ export function KpiCard({ label, value, change, trend = "flat", meta, icon, clas
   return (
     <section className={cn("rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger", className)}>
       <div className="flex items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{label}</p>
-          <div className="mt-3 font-serif text-3xl font-semibold leading-none tracking-normal text-ink-900">{value}</div>
+          <div className="mt-3 min-w-0 font-serif text-3xl font-semibold leading-none tracking-normal text-ink-900">{value}</div>
         </div>
         {icon ? <div className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-slate-200 bg-paper-50 text-slate-500">{icon}</div> : null}
       </div>

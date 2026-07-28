@@ -57,10 +57,10 @@ export default function DashboardPage() {
         <DoubleRule className="mt-5" />
       </header>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
         <KpiCard
           label="Net profit"
-          value={<CurrencyAmount amountMinor={model.pnl.netProfitMinor} />}
+          value={<CurrencyAmount amountMinor={model.pnl.netProfitMinor} display="stacked" />}
           change="+8.4% vs prior month"
           trend="up"
           meta="Accrual basis"
@@ -68,7 +68,7 @@ export default function DashboardPage() {
         />
         <KpiCard
           label="Income"
-          value={<CurrencyAmount amountMinor={model.pnl.incomeMinor} tone="income" />}
+          value={<CurrencyAmount amountMinor={model.pnl.incomeMinor} tone="income" display="stacked" />}
           change="2 posted sources"
           trend="up"
           meta="KES base"
@@ -76,7 +76,7 @@ export default function DashboardPage() {
         />
         <KpiCard
           label="Expenses"
-          value={<CurrencyAmount amountMinor={model.pnl.expenseMinor + model.pnl.cogsMinor} tone="expense" />}
+          value={<CurrencyAmount amountMinor={model.pnl.expenseMinor + model.pnl.cogsMinor} tone="expense" display="stacked" />}
           change="Fuel above trend"
           trend="down"
           meta="COGS included"
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         />
         <KpiCard
           label="Cash balance"
-          value={<CurrencyAmount amountMinor={model.cashBalanceMinor} />}
+          value={<CurrencyAmount amountMinor={model.cashBalanceMinor} display="stacked" />}
           change="Bank + M-Pesa"
           trend="flat"
           meta="2 accounts"
@@ -92,7 +92,7 @@ export default function DashboardPage() {
         />
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,0.6fr)]">
+      <section className="grid gap-4 2xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,0.6fr)]">
         <div className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger">
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <div>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(320px,0.55fr)_minmax(0,1fr)_minmax(340px,0.7fr)]">
+      <section className="grid gap-4 2xl:grid-cols-[minmax(320px,0.55fr)_minmax(0,1fr)_minmax(340px,0.7fr)]">
         <div className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger">
           <h2 className="text-lg font-semibold text-ink-900">Get ready to use</h2>
           <p className="mt-1 text-sm text-slate-500">Setup tasks for compliant, close-ready books.</p>
@@ -180,7 +180,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
+      <section className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger">
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <div>

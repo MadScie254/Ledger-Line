@@ -1,0 +1,36 @@
+
+> ledger-line@0.1.0 dev
+> npm run dev -w @ledgerline/web
+
+
+> @ledgerline/web@0.1.0 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 8.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 19.4s (1692 modules)
+ GET / 200 in 20000ms
+ GET / 200 in 116ms
+ ○ Compiling /[...section] ...
+ ✓ Compiled /[...section] in 2s (1731 modules)
+ GET /favicon.ico 404 in 4094ms
+ ✓ Compiled in 3s (1731 modules)
+ GET / 200 in 1374ms
+ GET /favicon.ico 404 in 333ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 4.1s (1720 modules)
+ GET / 200 in 3121ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 11.3s (1947 modules)
+ GET /_next/static/chunks/main-app.js?v=1785228632901 500 in 15512ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 15485ms
+ GET /_next/static/chunks/app/(app)/layout.js 500 in 15486ms
+ GET /_next/static/chunks/app/(app)/%5B...section%5D/page.js 500 in 15487ms
+ GET /_next/static/chunks/app/(app)/page.js 500 in 15494ms
+ GET /_next/static/css/app/layout.css?v=1785228632901 500 in 16602ms
+ GET / 500 in 1210ms
+[?25h
