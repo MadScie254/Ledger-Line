@@ -1,5 +1,7 @@
 ﻿import { SimpleEntityWorkspace } from "@/components/simple-entity-workspace";
 
+export const dynamic = "force-dynamic";
+
 export default function Page() {
   return (
     <SimpleEntityWorkspace
