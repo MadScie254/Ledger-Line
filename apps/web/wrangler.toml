@@ -10,8 +10,9 @@ binding = "ASSETS"
 [[hyperdrive]]
 binding = "HYPERDRIVE"
 # Replace before the first remote deploy. Local development reads the
-# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE environment variable.
+# same non-production connection as the workspace's ignored .env file.
 id = "00000000000000000000000000000000"
+localConnectionString = "postgresql://ledgerline:ledgerline@localhost:5432/ledgerline"
 
 [[r2_buckets]]
 binding = "RECEIPTS_BUCKET"

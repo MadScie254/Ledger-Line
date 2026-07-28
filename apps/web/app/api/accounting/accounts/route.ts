@@ -1,5 +1,5 @@
 import { createAccount, listAccounts } from "@ledgerline/db";
-import type { AccountType, Prisma } from "@ledgerline/db";
+import type { AccountType } from "@ledgerline/db";
 import { NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
 import { getCurrentWorkspace } from "@/lib/workspace";
@@ -103,5 +103,5 @@ export function errorResponse(error: unknown) {
 }
 
 function isPrismaUniqueError(error: unknown) {
-  return typeof error === "object" && error !== null && "code" in error && (error as Prisma.PrismaClientKnownRequestError).code === "P2002";
+  return typeof error === "object" && error !== null && "code" in error && (error as { code?: unknown }).code === "P2002";
 }
