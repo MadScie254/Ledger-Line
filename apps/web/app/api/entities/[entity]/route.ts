@@ -19,13 +19,13 @@ export async function GET(_request: Request, context: EntityRouteContext) {
 
     return await withDatabase(async (prisma) => {
       const records = await listEntityRecords(prisma, workspace.orgId, entity as EntityKey);
-      return NextResponse.json({ records });
+      return NextResponse.json({ records, source: "live" });
     });
   } catch (error) {
     const { entity } = await context.params;
 
     if (isDatabaseUnavailable(error)) {
-      return NextResponse.json({ records: getDemoEntityRecords(entity as EntityKey) });
+      return NextResponse.json({ records: getDemoEntityRecords(entity as EntityKey), source: "demo" });
     }
 
     return NextResponse.json({ error: formatError(error) }, { status: 400 });

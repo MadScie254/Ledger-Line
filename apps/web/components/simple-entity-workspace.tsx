@@ -39,6 +39,12 @@ interface Notice {
   message: string;
 }
 
+interface EntityListResponse {
+  records?: EntityRecord[];
+  error?: string;
+  source?: "live" | "demo";
+}
+
 export function SimpleEntityWorkspace({ title, description, createLabel, endpoint, fields }: EntityWorkspaceProps) {
   const [records, setRecords] = useState<EntityRecord[]>([]);
   const [draft, setDraft] = useState<Record<string, string>>({});
@@ -202,13 +208,17 @@ export function SimpleEntityWorkspace({ title, description, createLabel, endpoin
 
     try {
       const response = await fetch(endpoint, { cache: "no-store" });
-      const payload = (await response.json()) as { records?: EntityRecord[]; error?: string };
+      const payload = (await response.json()) as EntityListResponse;
 
       if (!response.ok) {
         throw new Error(payload.error ?? "Records could not be loaded.");
       }
 
       setRecords(payload.records ?? []);
+
+      if (payload.source === "demo") {
+        setNotice({ tone: "danger", message: "Local database unavailable. Showing demo records." });
+      }
     } catch (error) {
       setNotice({ tone: "danger", message: error instanceof Error ? error.message : "Records could not be loaded." });
     } finally {
