@@ -198,6 +198,12 @@ export const moduleDefinitions = {
     description: "Project records for job costing and tracking.",
     createLabel: "Create project"
   },
+  "projects-detail": {
+    moduleKey: "projects-detail",
+    title: "Project detail",
+    description: "Project-level activity and delivery notes.",
+    createLabel: "Add project note"
+  },
   "projects-time-tracking": {
     moduleKey: "projects-time-tracking",
     title: "Time tracking",
@@ -215,6 +221,12 @@ export const moduleDefinitions = {
     title: "Follow-ups",
     description: "Customer follow-up activities and reminders.",
     createLabel: "Create follow-up"
+  },
+  "customer-hub-customer-360": {
+    moduleKey: "customer-hub-customer-360",
+    title: "Customer 360",
+    description: "Customer-specific activity and lifecycle notes.",
+    createLabel: "Add customer note"
   },
   reports: {
     moduleKey: "reports",
