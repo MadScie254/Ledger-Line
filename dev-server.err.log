@@ -1,2 +1,13 @@
 npm warn Unknown env config "python". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
 npm warn Unknown env config "python". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+ ⚠ Found lockfile missing swc dependencies, patching...
+npm warn Unknown env config "python". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm error code ENOWORKSPACES
+npm error This command does not support workspaces.
+npm error A complete log of this run can be found in: C:\Users\MadScie254\AppData\Local\npm-cache\_logs\2026-07-28T08_54_53_223Z-debug-0.log
+ ⨯ Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+TypeError: Cannot read properties of undefined (reading 'os')
+    at fetchPkgInfo (C:\Users\MadScie254\Documents\GitHub\Ledger-Line\apps\web\node_modules\next\dist\lib\patch-incorrect-lockfile.js:73:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 7)
+    at async patchIncorrectLockfile (C:\Users\MadScie254\Documents\GitHub\Ledger-Line\apps\web\node_modules\next\dist\lib\patch-incorrect-lockfile.js:162:26)
