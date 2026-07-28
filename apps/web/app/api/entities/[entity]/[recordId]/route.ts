@@ -1,4 +1,4 @@
-import { Prisma } from "@ledgerline/db";
+﻿import { Prisma, type PrismaClient } from "@ledgerline/db";
 import { NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
 import { getCurrentWorkspace } from "@/lib/workspace";
@@ -17,17 +17,18 @@ export async function PATCH(request: Request, context: EntityRecordRouteContext)
     const workspace = getCurrentWorkspace();
     const payload = (await request.json()) as Record<string, unknown>;
 
-    return await withDatabase(async (prisma) => {
-      const record = await updateEntityRecord(prisma, workspace.orgId, workspace.userId ?? "system", entity as EntityKey, recordId, payload);
-      return NextResponse.json({ record });
-    });
+    const record = await withDatabase((prisma) =>
+      updateEntityRecord(prisma, workspace.orgId, workspace.userId ?? "system", entity as EntityKey, recordId, payload)
+    );
+
+    return NextResponse.json({ record });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Request failed." }, { status: 400 });
   }
 }
 
 async function updateEntityRecord(
-  prisma: Prisma.TransactionClient,
+  prisma: PrismaClient,
   orgId: string,
   userId: string,
   entity: EntityKey,
@@ -36,8 +37,13 @@ async function updateEntityRecord(
 ) {
   switch (entity) {
     case "customers": {
+      const current = await prisma.customer.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Customer not found.");
+      }
+
       const row = await prisma.customer.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           displayName: requiredString(payload.title, "Customer name"),
           companyName: optionalString(payload.subtitle),
@@ -58,8 +64,13 @@ async function updateEntityRecord(
       };
     }
     case "vendors": {
+      const current = await prisma.vendor.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Vendor not found.");
+      }
+
       const row = await prisma.vendor.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           displayName: requiredString(payload.title, "Vendor name"),
           category: optionalString(payload.subtitle),
@@ -80,8 +91,13 @@ async function updateEntityRecord(
       };
     }
     case "items": {
+      const current = await prisma.product.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Item not found.");
+      }
+
       const row = await prisma.product.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           name: requiredString(payload.title, "Item name"),
           sku: optionalString(payload.subtitle),
@@ -112,8 +128,13 @@ async function updateEntityRecord(
       };
     }
     case "invoices": {
+      const current = await prisma.invoice.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Invoice not found.");
+      }
+
       const row = await prisma.invoice.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           status: parseInvoiceStatus(payload.status),
           dueDate: optionalDate(payload.dueDate) ?? undefined,
@@ -134,8 +155,13 @@ async function updateEntityRecord(
       };
     }
     case "bills": {
+      const current = await prisma.bill.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Bill not found.");
+      }
+
       const row = await prisma.bill.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           status: parseBillStatus(payload.status),
           dueDate: optionalDate(payload.dueDate) ?? undefined
@@ -155,8 +181,13 @@ async function updateEntityRecord(
       };
     }
     case "expenses": {
+      const current = await prisma.expense.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Expense not found.");
+      }
+
       const row = await prisma.expense.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           payee: requiredString(payload.title, "Payee"),
           receiptUrl: optionalString(payload.subtitle)
@@ -175,8 +206,13 @@ async function updateEntityRecord(
       };
     }
     case "payments": {
+      const current = await prisma.paymentReceived.findFirst({ where: { id: recordId, orgId } });
+      if (!current) {
+        throw new Error("Payment not found.");
+      }
+
       const row = await prisma.paymentReceived.update({
-        where: { id: recordId, orgId },
+        where: { id: current.id },
         data: {
           reference: requiredString(payload.title, "Reference"),
           method: optionalString(payload.status) ?? undefined
@@ -248,7 +284,7 @@ function decimalToMinor(amount: Prisma.Decimal) {
 }
 
 async function audit(
-  prisma: Prisma.TransactionClient,
+  prisma: PrismaClient,
   orgId: string,
   userId: string,
   action: string,
