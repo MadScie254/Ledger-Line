@@ -1,4 +1,4 @@
-import type { AccountType, Prisma, PrismaClient } from "@prisma/client";
+import type { Account, AccountType, Prisma, PrismaClient } from "@prisma/client";
 
 export interface AccountMutationInput {
   code: string;
@@ -38,7 +38,7 @@ export async function createAccount(prisma: PrismaClient, context: AccountMutati
       }
     });
 
-    await writeAuditLog(tx, context, "account.created", account.id, { after: account });
+    await writeAuditLog(tx, context, "account.created", account.id, { after: accountSnapshot(account) });
     return account;
   });
 }
@@ -74,9 +74,23 @@ export async function updateAccount(
       }
     });
 
-    await writeAuditLog(tx, context, "account.updated", account.id, { before: current, after: account });
+    await writeAuditLog(tx, context, "account.updated", account.id, {
+      before: accountSnapshot(current),
+      after: accountSnapshot(account)
+    });
     return account;
   });
+}
+
+function accountSnapshot(account: Account) {
+  return {
+    code: account.code,
+    currency: account.currency,
+    isActive: account.isActive,
+    name: account.name,
+    subtype: account.subtype,
+    type: account.type
+  } satisfies Prisma.InputJsonObject;
 }
 
 async function writeAuditLog(
