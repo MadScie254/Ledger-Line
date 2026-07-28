@@ -10,8 +10,8 @@
     "test": "vitest run --passWithNoTests",
     "test:integration": "vitest run test/**/*.integration.test.ts",
     "cf:build": "opennextjs-cloudflare build",
-    "cf:preview": "opennextjs-cloudflare build && wrangler dev",
-    "cf:deploy": "opennextjs-cloudflare build && wrangler deploy",
+    "cf:preview": "set OPENNEXT_CLOUDFLARE_DEV=1&& opennextjs-cloudflare build && wrangler dev",
+    "cf:deploy": "set OPENNEXT_CLOUDFLARE_DEV=1&& opennextjs-cloudflare build && wrangler deploy",
     "cf:types": "wrangler types --env-interface CloudflareEnv"
   },
   "dependencies": {
