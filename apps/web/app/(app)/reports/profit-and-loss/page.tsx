@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+﻿import { ProfitAndLossWorkspace } from "@/components/profit-and-loss-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="reports-profit-and-loss" />;
+  return <ProfitAndLossWorkspace />;
 }
