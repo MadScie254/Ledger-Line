@@ -78,7 +78,7 @@ export async function POST(request: Request) {
             successRows: createdRecords.length,
             failedRows: 0,
             status: "committed",
-            createdRecordIds: { records: createdRecords },
+            createdRecordIds: { records: createdRecords as Prisma.InputJsonValue[] } satisfies Prisma.InputJsonObject,
             importedBy: userId
           }
         });

@@ -609,7 +609,7 @@ async function audit(
       orgId,
       userId,
       action,
-      entityType: action.split(".")[0],
+      entityType: action.split(".")[0] ?? action,
       entityId,
       diff
     }

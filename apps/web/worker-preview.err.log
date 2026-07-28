@@ -166,3 +166,25 @@ npm warn Unknown env config "python". This will stop working in the next major v
   
 
 
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mBuild failed with 1 error:[0m
+
+  [31mX [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "C:\\Users\\MadScie254\\Documents\\GitHub\\Ledger-Line\\apps\\web\\.open-next\\worker.js"[0m
+  
+      .wrangler/tmp/bundle-MC6Yfh/middleware-insertion-facade.js:1:43:
+  [37m      1 │ ...PORTS from [32m"C:\\Users\\MadScie254\\Documents\\GitHub\\Ledger-Lin[37m...
+          ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+  
+  
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mBuild failed with 1 error:[0m
+
+  [31mX [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "C:\\Users\\MadScie254\\Documents\\GitHub\\Ledger-Line\\apps\\web\\.open-next\\worker.js"[0m
+  
+      .wrangler/tmp/bundle-MC6Yfh/middleware-insertion-facade.js:1:43:
+  [37m      1 │ ...PORTS from [32m"C:\\Users\\MadScie254\\Documents\\GitHub\\Ledger-Lin[37m...
+          ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+  
+  
+
+

@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+﻿import { ImportWorkspace } from "@/components/import-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="settings-import" />;
+  return <ImportWorkspace />;
 }
