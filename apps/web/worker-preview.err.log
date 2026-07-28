@@ -1,0 +1,72 @@
+npm warn Unknown env config "python". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mprisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".[0m
+
+  Please manually install OpenSSL and try installing Prisma again.
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mAccount API request failed PrismaClientInitializationError: Prisma Client could not locate the Query Engine for runtime "debian-openssl-1.1.x".[0m
+
+  
+  This happened because Prisma Client was generated for "windows", but the actual deployment required "debian-openssl-1.1.x".
+  Add "debian-openssl-1.1.x" to `binaryTargets` in the "schema.prisma" file and run `prisma generate` after saving it:
+  
+  generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "debian-openssl-1.1.x"]
+  }
+  
+  The following locations have been searched:
+    /node_modules/.prisma/client
+    /
+    C:\Users\MadScie254\Documents\GitHub\Ledger-Line\node_modules\@prisma\client
+    /.prisma/client
+    /tmp/prisma-engines
+      at ml (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:215:805)
+      at async Object.loadLibrary (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:262:7994)
+      at async Qr.loadEngine (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:263:448)
+      at async Qr.instantiateLibrary (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:262:11889)
+      at async Qr.start (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:263:2155)
+      at async Qr.request (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:263:4178)
+      at async Object.singleLoader (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:272:5695)
+      at async ei.request (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:272:6187)
+      at async a (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:281:9434)
+      at async h (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:1179:22668) {
+    clientVersion: '6.19.3',
+    errorCode: undefined,
+    retryable: undefined
+  }
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mAccount API request failed PrismaClientInitializationError: Prisma Client could not locate the Query Engine for runtime "debian-openssl-1.1.x".[0m
+
+  
+  This happened because Prisma Client was generated for "windows", but the actual deployment required "debian-openssl-1.1.x".
+  Add "debian-openssl-1.1.x" to `binaryTargets` in the "schema.prisma" file and run `prisma generate` after saving it:
+  
+  generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "debian-openssl-1.1.x"]
+  }
+  
+  The following locations have been searched:
+    /node_modules/.prisma/client
+    /
+    C:\Users\MadScie254\Documents\GitHub\Ledger-Line\node_modules\@prisma\client
+    /.prisma/client
+    /tmp/prisma-engines
+      at ml (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:215:805)
+      at async Object.loadLibrary (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:262:7994)
+      at async Qr.loadEngine (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:263:448)
+      at async Qr.instantiateLibrary (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:262:11889)
+      at async Qr.start (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:263:2155)
+      at async Qr.request (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:263:4178)
+      at async Object.singleLoader (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:272:5695)
+      at async ei.request (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:272:6187)
+      at async a (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:281:9434)
+      at async h (file:///C:/Users/MadScie254/Documents/GitHub/Ledger-Line/apps/web/.open-next/server-functions/default/apps/web/handler.mjs:1179:22668) {
+    clientVersion: '6.19.3',
+    errorCode: undefined,
+    retryable: undefined
+  }
+
+

@@ -1,0 +1,60 @@
+
+ ⛅️ wrangler 4.114.0
+────────────────────
+Your Worker has access to the following bindings:
+Binding                                                     Resource               Mode
+env.SESSION_KV (00000000000000000000000000000000)           KV Namespace           local
+env.HYPERDRIVE (00000000000000000000000000000000)           Hyperdrive Config      local
+env.RECEIPTS_BUCKET (ledgerline-receipts)                   R2 Bucket              local
+env.ASSETS                                                  Assets                 local
+
+Wrangler detected this dev session is running in an AI agent.
+The Local Explorer API is available at http://127.0.0.1:8787/cdn-cgi/explorer/api
+Useful routes:
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api - OpenAPI schema
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api/d1/database - D1 databases
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api/local/workers - local Workers and bindings
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api/r2/buckets - R2 buckets
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api/storage/kv/namespaces - KV namespaces
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces
+  GET http://127.0.0.1:8787/cdn-cgi/explorer/api/workflows - Workflows
+⎔ Starting local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+[wrangler:info] Ready on http://127.0.0.1:8787
+[wrangler:info] GET /accounting/chart-of-accounts 200 OK (837ms)
+[wrangler:info] GET /api/accounting/accounts 500 Internal Server Error (222ms)
+[wrangler:info] GET /accounting/chart-of-accounts 200 OK (370ms)
+[wrangler:info] GET /_next/static/css/39a90a9defed5bd5.css 200 OK (135ms)
+[wrangler:info] GET /_next/static/chunks/webpack-e78e417477bc29a3.js 200 OK (362ms)
+[wrangler:info] GET /_next/static/chunks/87c73c54-09e1ba5c70e60a51.js 200 OK (817ms)
+[wrangler:info] GET /_next/static/chunks/18-c6633c4945af8275.js 200 OK (553ms)
+[wrangler:info] GET /_next/static/chunks/main-app-4f610e5c015fbd61.js 200 OK (723ms)
+[wrangler:info] GET /_next/static/chunks/206-21325fa810cc687e.js 200 OK (744ms)
+[wrangler:info] GET /_next/static/chunks/362-f0c5a13dfdf977e0.js 200 OK (859ms)
+[wrangler:info] GET /_next/static/chunks/664-0d0d4be48b91dce8.js 200 OK (999ms)
+[wrangler:info] GET /_next/static/chunks/app/(app)/layout-320058aae8d54c72.js 200 OK (1091ms)
+[wrangler:info] GET /_next/static/chunks/app/(app)/accounting/chart-of-accounts/page-e450bb418ab457fa.js 200 OK (349ms)
+[wrangler:info] GET /api/accounting/accounts 500 Internal Server Error (260ms)
+[wrangler:info] GET /banking 200 OK (1486ms)
+[wrangler:info] GET /favicon.ico 404 Not Found (1656ms)
+[wrangler:info] GET / 200 OK (1629ms)
+[wrangler:info] GET /sales 200 OK (67ms)
+[wrangler:info] GET /expenses 200 OK (85ms)
+[wrangler:info] GET /accounting 200 OK (103ms)
+[wrangler:info] GET /accounting/journal-entries 200 OK (160ms)
+[wrangler:info] GET /_next/static/chunks/app/(app)/page-de4097c56d0b12e6.js 200 OK (228ms)
+[wrangler:info] GET /_next/static/chunks/600-d839e2e8c44eb388.js 200 OK (812ms)
+[wrangler:info] GET /accounting/reconciliation-history 200 OK (79ms)
+[wrangler:info] GET /accounting/close 200 OK (70ms)
+[wrangler:info] GET /payroll 200 OK (94ms)
+[wrangler:info] GET /tax 200 OK (107ms)
+[wrangler:info] GET /inventory 200 OK (130ms)
+[wrangler:info] GET /projects 200 OK (38ms)
+[wrangler:info] GET /customer-hub 200 OK (45ms)
+[wrangler:info] GET /reports 200 OK (53ms)
+[wrangler:info] GET /sales/invoices/new 200 OK (75ms)
+[wrangler:info] GET /team 200 OK (80ms)
+[wrangler:info] GET /expenses/expenses/new 200 OK (38ms)
+[wrangler:info] GET /banking/connections 200 OK (47ms)
+[wrangler:info] GET /accounting/journal-entries/new 200 OK (58ms)
+[wrangler:info] GET /settings/company 200 OK (69ms)

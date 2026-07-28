@@ -10,11 +10,12 @@ describeWithDatabase("chart of accounts route handlers", () => {
   const orgId = `org-integration-${Date.now()}`;
   const previousDatabaseUrl = process.env.DATABASE_URL;
   const previousOrgId = process.env.LEDGERLINE_DEMO_ORG_ID;
-  const prisma = createPrismaClient({ connectionString: testDatabaseUrl ?? "" });
+  let prisma: ReturnType<typeof createPrismaClient>;
 
   beforeAll(async () => {
-    process.env.DATABASE_URL = testDatabaseUrl;
+    process.env.DATABASE_URL = testDatabaseUrl!;
     process.env.LEDGERLINE_DEMO_ORG_ID = orgId;
+    prisma = createPrismaClient({ connectionString: testDatabaseUrl! });
     await prisma.organization.create({ data: { id: orgId, name: "Integration Test Org" } });
   });
 
