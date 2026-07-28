@@ -2,6 +2,7 @@
 
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Check, LoaderCircle, Pencil, Plus, RefreshCw, X } from "lucide-react";
 import { Button, DataTable, DoubleRule, EmptyState, Field, Input, Select, StatusPill, type DataTableColumn } from "@ledgerline/ui";
 import type { ModuleDefinition } from "@/lib/module-registry";
@@ -140,10 +141,18 @@ export function WorkspaceRecordsWorkspace({ definition }: { definition: ModuleDe
               title="No records found"
               body="Create your first record for this module or import from spreadsheet in Settings > Import."
               action={
-                <Button variant="secondary" onClick={startCreate}>
-                  <Plus className="h-4 w-4" aria-hidden="true" />
-                  {definition.createLabel}
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="secondary" onClick={startCreate}>
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                    {definition.createLabel}
+                  </Button>
+                  <Link
+                    href="/settings/import"
+                    className="inline-flex h-9 items-center justify-center rounded-[6px] px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-paper-100 hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-blue-500 focus-visible:ring-offset-2"
+                  >
+                    Import from spreadsheet
+                  </Link>
+                </div>
               }
             />
           )}

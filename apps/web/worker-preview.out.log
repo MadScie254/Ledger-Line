@@ -58,3 +58,5 @@ Useful routes:
 [wrangler:info] GET /banking/connections 200 OK (47ms)
 [wrangler:info] GET /accounting/journal-entries/new 200 OK (58ms)
 [wrangler:info] GET /settings/company 200 OK (69ms)
+⎔ Reloading local server...
+⎔ Local server updated and ready
