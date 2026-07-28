@@ -36,7 +36,7 @@ export const navigation: NavItem[] = [
   { title: "Home", href: "/", icon: Home },
   {
     title: "Banking",
-    href: "/banking",
+    href: "/banking/transactions",
     icon: Landmark,
     children: [
       { title: "Bank transactions", href: "/banking/transactions" },
@@ -86,7 +86,7 @@ export const navigation: NavItem[] = [
   },
   {
     title: "Payroll",
-    href: "/payroll",
+    href: "/payroll/employees",
     icon: HandCoins,
     children: [
       { title: "Employees", href: "/payroll/employees" },
@@ -107,7 +107,7 @@ export const navigation: NavItem[] = [
   },
   {
     title: "Inventory",
-    href: "/inventory",
+    href: "/inventory/items",
     icon: Boxes,
     children: [
       { title: "Items", href: "/inventory/items" },
@@ -121,6 +121,7 @@ export const navigation: NavItem[] = [
     icon: BriefcaseBusiness,
     children: [
       { title: "Project list", href: "/projects" },
+      { title: "Project detail", href: "/projects/demo-project" },
       { title: "Time tracking", href: "/projects/time-tracking" }
     ]
   },
@@ -131,7 +132,7 @@ export const navigation: NavItem[] = [
     children: [
       { title: "Leads", href: "/customer-hub/leads" },
       { title: "Follow-ups", href: "/customer-hub/follow-ups" },
-      { title: "Customer 360", href: "/customer-hub/[customerId]" }
+      { title: "Customer 360", href: "/customer-hub/demo-customer" }
     ]
   },
   {
@@ -161,7 +162,7 @@ export const navigation: NavItem[] = [
   { title: "Business Feed", href: "/business-feed", icon: Sparkles },
   {
     title: "Settings",
-    href: "/settings",
+    href: "/settings/company",
     icon: Settings,
     children: [
       { title: "Company profile", href: "/settings/company" },
