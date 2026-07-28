@@ -1,8 +1,8 @@
 import { updateAccount } from "@ledgerline/db";
 import { NextResponse } from "next/server";
+import { errorResponse, parseAccountInput, serializeAccount } from "@/lib/account-api";
 import { withDatabase } from "@/lib/database";
 import { getCurrentWorkspace } from "@/lib/workspace";
-import { errorResponse, parseAccountInput, serializeAccount } from "../route";
 
 export const runtime = "nodejs";
 

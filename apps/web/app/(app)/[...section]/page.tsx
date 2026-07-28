@@ -4,13 +4,14 @@ import { ModulePage } from "@/components/module-page";
 import { navigation, quickActions, titleFromPath } from "@/lib/navigation";
 
 interface SectionPageProps {
-  params: {
+  params: Promise<{
     section: string[];
-  };
+  }>;
 }
 
-export default function SectionPage({ params }: SectionPageProps) {
-  const pathname = `/${params.section.join("/")}`;
+export default async function SectionPage({ params }: SectionPageProps) {
+  const { section } = await params;
+  const pathname = `/${section.join("/")}`;
 
   if (pathname === "/catalog") {
     return <ComponentCatalog />;
