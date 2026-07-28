@@ -11,3 +11,11 @@
 
  ✓ Starting...
  ✓ Ready in 21.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.5s (1692 modules)
+ GET / 200 in 13250ms
+ GET / 200 in 161ms
+ GET / 200 in 102ms
+ ○ Compiling /[...section] ...
+ ✓ Compiled /[...section] in 1166ms (1731 modules)
+[?25h

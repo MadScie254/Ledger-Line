@@ -15,7 +15,9 @@
     "test": "npm run test --workspaces --if-present",
     "test:ledger": "npm run test -w @ledgerline/ledger-service",
     "db:validate": "prisma validate --schema packages/db/prisma/schema.prisma",
-    "db:seed": "tsx packages/db/prisma/seed.ts"
+    "db:seed": "npm run seed -w @ledgerline/db",
+    "cf:build": "npm run cf:build -w @ledgerline/web",
+    "cf:preview": "npm run cf:preview -w @ledgerline/web"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

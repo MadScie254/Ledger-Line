@@ -7,9 +7,15 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"@ledgerline/web e2e tests are pending\""
+    "test": "vitest run --passWithNoTests",
+    "test:integration": "vitest run test/**/*.integration.test.ts",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "opennextjs-cloudflare build && wrangler dev",
+    "cf:deploy": "opennextjs-cloudflare build && wrangler deploy",
+    "cf:types": "wrangler types --env-interface CloudflareEnv"
   },
   "dependencies": {
+    "@ledgerline/db": "0.1.0",
     "@ledgerline/ledger-service": "0.1.0",
     "@ledgerline/types": "0.1.0",
     "@ledgerline/ui": "0.1.0",
@@ -17,7 +23,8 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",
-    "next": "^14.2.21",
+    "@opennextjs/cloudflare": "^1.20.2",
+    "next": "15.5.22",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^2.15.0",
@@ -30,6 +37,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "wrangler": "^4.114.0"
   }
 }

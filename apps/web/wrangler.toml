@@ -1,0 +1,22 @@
+name = "ledgerline"
+main = ".open-next/worker.js"
+compatibility_date = "2026-07-27"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+# Replace before the first remote deploy. Local development reads the
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE environment variable.
+id = "00000000000000000000000000000000"
+
+[[r2_buckets]]
+binding = "RECEIPTS_BUCKET"
+bucket_name = "ledgerline-receipts"
+
+[[kv_namespaces]]
+binding = "SESSION_KV"
+id = "00000000000000000000000000000000"

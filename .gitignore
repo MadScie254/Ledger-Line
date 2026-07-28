@@ -5,6 +5,7 @@ node_modules
 
 # build output
 .next
+.open-next
 out
 dist
 coverage
