@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+﻿import { AuditLogWorkspace } from "@/components/audit-log-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="settings-audit-log" />;
+  return <AuditLogWorkspace />;
 }

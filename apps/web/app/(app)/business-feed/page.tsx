@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+﻿import { BusinessFeedWorkspace } from "@/components/business-feed-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="business-feed" />;
+  return <BusinessFeedWorkspace />;
 }
