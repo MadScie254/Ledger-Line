@@ -184,6 +184,8 @@ model Organization {
   savedReports           SavedReport[]
   integrations           Integration[]
   exchangeRates          ExchangeRate[]
+  workspaceRecords       WorkspaceRecord[]
+  importBatches          ImportBatch[]
 }
 
 model User {
@@ -836,4 +838,39 @@ model ExchangeRate {
   asOfDate     DateTime
 
   @@unique([orgId, currencyCode, asOfDate])
+}
+
+model WorkspaceRecord {
+  id          String       @id @default(cuid())
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  moduleKey   String
+  title       String
+  subtitle    String?
+  status      String?
+  amountMinor Int?
+  metadata    Json?
+  createdBy   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([orgId, moduleKey, createdAt])
+}
+
+model ImportBatch {
+  id               String       @id @default(cuid())
+  orgId            String
+  org              Organization @relation(fields: [orgId], references: [id])
+  targetType       String
+  fileName         String
+  totalRows        Int
+  successRows      Int
+  failedRows       Int
+  status           String
+  createdRecordIds Json
+  importedBy       String
+  createdAt        DateTime     @default(now())
+  reversedAt       DateTime?
+
+  @@index([orgId, targetType, createdAt])
 }
