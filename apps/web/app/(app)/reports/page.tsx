@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+﻿import { ReportsWorkspace } from "@/components/reports-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="reports" />;
+  return <ReportsWorkspace />;
 }
