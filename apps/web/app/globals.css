@@ -52,6 +52,16 @@ textarea {
   background: rgba(184, 134, 59, 0.28);
 }
 
+/* Fix for browser autofill overriding text color in dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px #122744 inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
 .double-rule {
   height: 5px;
   border-top: 1px solid rgba(91, 100, 114, 0.44);
