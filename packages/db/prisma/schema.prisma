@@ -310,6 +310,7 @@ model AccountingPeriod {
   closedBy  String?
   closedByUser User?              @relation("PeriodClosedBy", fields: [closedBy], references: [id])
   closedAt  DateTime?
+  journalEntries JournalEntry[]
 
   @@unique([orgId, startDate, endDate])
 }
@@ -437,6 +438,7 @@ model Invoice {
   updatedAt           DateTime          @updatedAt
   lines               InvoiceLine[]
   payments            PaymentReceived[]
+  paymentAllocations  PaymentReceivedAllocation[]
 
   @@unique([orgId, invoiceNo])
   @@index([orgId, status, dueDate])
@@ -599,6 +601,7 @@ model Bill {
   updatedAt   DateTime      @updatedAt
   lines       BillLine[]
   payments    BillPayment[]
+  paymentAllocations BillPaymentAllocation[]
 
   @@unique([orgId, billNo])
   @@index([orgId, status, dueDate])

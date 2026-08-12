@@ -39,7 +39,7 @@ describeWithDatabase("chart of accounts route handlers", () => {
     expect(createResponse.status).toBe(201);
     expect(created.account.name).toBe("Marketplace fees");
 
-    const listResponse = await GET();
+    const listResponse = await GET(new Request("http://ledgerline.test/api/accounting/accounts") as any);
     const list = await listResponse.json() as { accounts: Array<{ id: string }> };
     expect(list.accounts.some((account) => account.id === created.account.id)).toBe(true);
 

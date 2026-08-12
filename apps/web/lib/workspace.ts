@@ -27,7 +27,7 @@ export interface WorkspaceContext {
  *   ```
  */
 export async function requireWorkspace(
-  _request: Request | NextRequest
+  _request?: Request | NextRequest
 ): Promise<WorkspaceContext | NextResponse> {
   const supabase = await createSupabaseServerClient();
 

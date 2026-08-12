@@ -26,9 +26,7 @@ export async function GET(request: Request, context: EntityRouteContext) {
   } catch (error) {
     const { entity } = await context.params;
 
-    if (isDatabaseUnavailable(error)) {
-      return NextResponse.json({ records: getDemoEntityRecords(entity as EntityKey), source: "demo" });
-    }
+    
 
     return NextResponse.json({ error: formatError(error) }, { status: 400 });
   }
@@ -589,137 +587,13 @@ async function findAccountByCode(prisma: Prisma.TransactionClient | PrismaClient
 }
 
 function formatError(error: unknown) {
-  if (isDatabaseUnavailable(error)) {
-    return "The local database is unavailable. Showing demo records instead.";
-  }
+  
 
   if (error && typeof error === "object" && "code" in error && (error as { code?: unknown }).code === "P2002") {
     return "A duplicate unique value already exists for this entity.";
   }
 
   return error instanceof Error ? error.message : "Request failed.";
-}
-
-function isDatabaseUnavailable(error: unknown) {
-  return error && typeof error === "object" && "code" in error && (error as { code?: unknown }).code === "ECONNREFUSED";
-}
-
-function getDemoEntityRecords(entity: EntityKey) {
-  switch (entity) {
-    case "customers":
-      return [
-        {
-          id: "cust-kijani",
-          title: "Kijani Grocers",
-          subtitle: "Wholesale grocery chain",
-          status: "Open balance",
-          amountMinor: 412_00000,
-          createdAt: "2026-07-03T00:00:00.000Z",
-          metadata: { emails: ["accounts@kijani.example"], phones: ["+254700123456"] }
-        },
-        {
-          id: "cust-lakefront",
-          title: "Lakefront Hotels",
-          subtitle: "Hospitality",
-          status: "Current",
-          amountMinor: 0,
-          createdAt: "2026-07-10T00:00:00.000Z",
-          metadata: { emails: ["finance@lakefront.example"], phones: ["+254700654321"] }
-        }
-      ];
-    case "vendors":
-      return [
-        {
-          id: "vend-nakuru",
-          title: "Nakuru Supplies Ltd",
-          subtitle: "Packaging and wholesale stock",
-          status: "Payable",
-          amountMinor: 450_00000,
-          createdAt: "2026-07-10T00:00:00.000Z",
-          metadata: { emails: ["billing@nakurusupplies.example"], phones: ["+254711000111"] }
-        },
-        {
-          id: "vend-coast",
-          title: "Coast Logistics",
-          subtitle: "Freight and delivery",
-          status: "Current",
-          amountMinor: 0,
-          createdAt: "2026-07-12T00:00:00.000Z",
-          metadata: { emails: ["ops@coastlogistics.example"], phones: ["+254722000222"] }
-        }
-      ];
-    case "items":
-      return [
-        {
-          id: "item-fresh-tea",
-          title: "Fresh tea leaves",
-          subtitle: "SKU TEA-001",
-          status: "Inventory",
-          amountMinor: 185_0000,
-          createdAt: "2026-07-05T00:00:00.000Z",
-          metadata: { qtyOnHand: "240", costMinor: 120_0000 }
-        },
-        {
-          id: "item-boxes",
-          title: "Shipping cartons",
-          subtitle: "SKU BOX-014",
-          status: "Inventory",
-          amountMinor: 42_5000,
-          createdAt: "2026-07-07T00:00:00.000Z",
-          metadata: { qtyOnHand: "600", costMinor: 18_0000 }
-        }
-      ];
-    case "invoices":
-      return [
-        {
-          id: "inv-1024",
-          title: "INV-1024",
-          subtitle: "Kijani Grocers",
-          status: "PARTIAL",
-          amountMinor: 1_612_00000,
-          createdAt: "2026-07-03T00:00:00.000Z",
-          metadata: { dueDate: "2026-07-24", balanceDueMinor: 412_00000 }
-        }
-      ];
-    case "bills":
-      return [
-        {
-          id: "bill-884",
-          title: "BILL-884",
-          subtitle: "Nakuru Supplies Ltd",
-          status: "OPEN",
-          amountMinor: 450_00000,
-          createdAt: "2026-07-10T00:00:00.000Z",
-          metadata: { dueDate: "2026-07-24" }
-        }
-      ];
-    case "expenses":
-      return [
-        {
-          id: "exp-742",
-          title: "Fuel and logistics",
-          subtitle: null,
-          status: "Posted",
-          amountMinor: 136_50000,
-          createdAt: "2026-07-12T00:00:00.000Z",
-          metadata: { categoryAccountCode: "6300", paymentAccountCode: "1000" }
-        }
-      ];
-    case "payments":
-      return [
-        {
-          id: "pay-1024-a",
-          title: "RCPT-2210",
-          subtitle: "Kijani Grocers",
-          status: "bank",
-          amountMinor: 1_200_00000,
-          createdAt: "2026-07-08T00:00:00.000Z",
-          metadata: { invoiceNo: "INV-1024" }
-        }
-      ];
-    default:
-      return [];
-  }
 }
 
 async function audit(

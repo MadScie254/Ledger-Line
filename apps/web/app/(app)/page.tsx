@@ -1,42 +1,116 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { DoubleRule } from "@ledgerline/ui";
-import { navigation } from "@/lib/navigation";
+import { formatMoneyMinor } from "@ledgerline/ledger-service";
+
+interface DashboardData {
+  kpis: {
+    unpaidInvoices: number;
+    unpaidBills: number;
+    cashBalance: number;
+  };
+  recentActivity: Array<{
+    id: string;
+    date: string;
+    memo: string | null;
+    amount: number;
+  }>;
+}
 
 export default function DashboardPage() {
-  const sections = navigation.filter((item) => item.href !== "/");
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load dashboard.");
+        return res.json();
+      })
+      .then((json) => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-sm text-slate-500">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rounded border border-red-200 bg-red-50 p-4">
+        <p className="text-sm text-red-600">{error || "Could not load data."}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-500">Production sprint</p>
-        <h1 className="mt-2 font-serif text-4xl font-semibold tracking-normal text-ink-900">Ledgerline workspace</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-500">Overview</p>
+        <h1 className="mt-2 font-serif text-4xl font-semibold tracking-normal text-ink-900">Dashboard</h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-500">
-          Every module below now resolves to a dedicated route with live Postgres-backed list, create, and edit capabilities.
+          Your financial snapshot and recent activity.
         </p>
         <DoubleRule className="mt-5" />
       </header>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {sections.map((section) => (
-          <article key={section.href} className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger">
-            <h2 className="text-lg font-semibold text-ink-900">{section.title}</h2>
-            <p className="mt-1 text-sm text-slate-500">{section.children?.length ?? 0} linked screens are available.</p>
-            <DoubleRule className="my-4" />
-            <div className="space-y-2">
-              {section.children?.map((child) => (
-                <Link
-                  key={child.href}
-                  href={child.href}
-                  className="flex items-center justify-between rounded-[6px] border border-slate-200 px-3 py-2 text-sm font-medium text-ink-900 transition hover:bg-paper-50 focus-ring"
-                >
-                  <span>{child.title}</span>
-                  <ArrowRight className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                </Link>
+      <section className="grid gap-4 md:grid-cols-3">
+        <article className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-ledger">
+          <p className="text-sm font-medium text-slate-500">Cash Balance</p>
+          <p className="mt-2 text-3xl font-semibold text-ink-900 font-mono">
+            {formatMoneyMinor(data.kpis.cashBalance)}
+          </p>
+        </article>
+
+        <article className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-ledger">
+          <p className="text-sm font-medium text-slate-500">Unpaid Invoices</p>
+          <p className="mt-2 text-3xl font-semibold text-ink-900 font-mono">
+            {formatMoneyMinor(data.kpis.unpaidInvoices)}
+          </p>
+        </article>
+
+        <article className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-ledger">
+          <p className="text-sm font-medium text-slate-500">Unpaid Bills</p>
+          <p className="mt-2 text-3xl font-semibold text-ink-900 font-mono">
+            {formatMoneyMinor(data.kpis.unpaidBills)}
+          </p>
+        </article>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold text-ink-900">Recent Activity</h2>
+        <DoubleRule className="my-4" />
+        {data.recentActivity.length === 0 ? (
+          <p className="text-sm text-slate-500">No recent activity.</p>
+        ) : (
+          <div className="rounded-[8px] border border-slate-200 bg-white shadow-ledger">
+            <ul className="divide-y divide-slate-100">
+              {data.recentActivity.map((activity) => (
+                <li key={activity.id} className="flex items-center justify-between p-4">
+                  <div>
+                    <p className="text-sm font-medium text-ink-900">{activity.memo || "Journal Entry"}</p>
+                    <p className="text-xs text-slate-500">{new Date(activity.date).toLocaleDateString()}</p>
+                  </div>
+                  <p className="text-sm font-semibold font-mono text-ink-900">
+                    {formatMoneyMinor(activity.amount)}
+                  </p>
+                </li>
               ))}
-            </div>
-          </article>
-        ))}
+            </ul>
+          </div>
+        )}
       </section>
     </div>
   );

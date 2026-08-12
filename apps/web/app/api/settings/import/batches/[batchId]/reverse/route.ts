@@ -9,7 +9,7 @@ interface ReverseRouteContext {
   params: Promise<{ batchId: string }>;
 }
 
-export async function POST(_request: Request, context: ReverseRouteContext) {
+export async function POST(request: Request, context: ReverseRouteContext) {
   try {
     const { batchId } = await context.params;
     const workspace = await requireWorkspace(request);
