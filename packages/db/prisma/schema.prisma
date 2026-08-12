@@ -201,6 +201,11 @@ model User {
   auditLogEntries AuditLogEntry[]
   notifications   Notification[]
   timeEntries     TimeEntry[]
+  createdJournalEntries JournalEntry[] @relation("JournalEntryCreatedBy")
+  closedPeriods         AccountingPeriod[] @relation("PeriodClosedBy")
+  uploadedAttachments   Attachment[] @relation("AttachmentUploadedBy")
+  createdWorkspaceRecords WorkspaceRecord[] @relation("WorkspaceRecordCreatedBy")
+  importedBatches       ImportBatch[] @relation("ImportBatchImportedBy")
   createdAt       DateTime        @default(now())
 }
 
@@ -267,6 +272,9 @@ model JournalEntry {
   sourceId     String?
   referenceNo  String?
   createdBy    String
+  createdByUser User?             @relation("JournalEntryCreatedBy", fields: [createdBy], references: [id])
+  accountingPeriodId String?
+  accountingPeriod   AccountingPeriod? @relation(fields: [accountingPeriodId], references: [id])
   postedAt     DateTime           @default(now())
   isReversalOf String?
   lines        JournalLine[]
@@ -300,6 +308,7 @@ model AccountingPeriod {
   endDate   DateTime
   status    AccountingPeriodStatus @default(OPEN)
   closedBy  String?
+  closedByUser User?              @relation("PeriodClosedBy", fields: [closedBy], references: [id])
   closedAt  DateTime?
 
   @@unique([orgId, startDate, endDate])
@@ -363,6 +372,8 @@ model Customer {
   balance         Decimal           @default(0) @db.Decimal(18, 2)
   creditLimit     Decimal?          @db.Decimal(18, 2)
   tags            String[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   invoices        Invoice[]
   estimates       Estimate[]
   salesReceipts   SalesReceipt[]
@@ -422,6 +433,8 @@ model Invoice {
   message             String?
   footer              String?
   recurringTemplateId String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
   lines               InvoiceLine[]
   payments            PaymentReceived[]
 
@@ -515,11 +528,22 @@ model PaymentReceived {
   date             DateTime
   method           String
   depositAccountId String
-  appliedTo        Json
+  allocations      PaymentReceivedAllocation[]
   reference        String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   @@index([orgId, date])
 }
+
+model PaymentReceivedAllocation {
+  id                String          @id @default(cuid())
+  paymentReceivedId String
+  paymentReceived   PaymentReceived @relation(fields: [paymentReceivedId], references: [id], onDelete: Cascade)
+  invoiceId         String
+  invoice           Invoice         @relation(fields: [invoiceId], references: [id])
+  amount            Decimal         @db.Decimal(18, 2)
+
 
 model RecurringTemplate {
   id             String       @id @default(cuid())
@@ -546,6 +570,9 @@ model Vendor {
   paymentTerms String?
   balance      Decimal      @default(0) @db.Decimal(18, 2)
   category     String?
+  currency     String       @default("KES")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   bills        Bill[]
   purchaseOrders PurchaseOrder[]
 
@@ -566,6 +593,10 @@ model Bill {
   taxTotal    Decimal       @default(0) @db.Decimal(18, 2)
   total       Decimal       @default(0) @db.Decimal(18, 2)
   amountPaid  Decimal       @default(0) @db.Decimal(18, 2)
+  currency    String        @default("KES")
+  fxRate      Decimal       @default(1) @db.Decimal(18, 8)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   lines       BillLine[]
   payments    BillPayment[]
 
@@ -609,6 +640,8 @@ model Expense {
   customerId        String?
   customer          Customer?    @relation(fields: [customerId], references: [id])
   receiptUrl        String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
   @@index([orgId, date])
 }
@@ -629,13 +662,22 @@ model BillPayment {
   org              Organization @relation(fields: [orgId], references: [id])
   billId           String?
   bill             Bill?    @relation(fields: [billId], references: [id])
-  billIds          Json?
   amount           Decimal  @db.Decimal(18, 2)
   date             DateTime
   paymentAccountId String
   method           String
   reference        String?
+  allocations      BillPaymentAllocation[]
 }
+
+model BillPaymentAllocation {
+  id            String      @id @default(cuid())
+  billPaymentId String
+  billPayment   BillPayment @relation(fields: [billPaymentId], references: [id], onDelete: Cascade)
+  billId        String
+  bill          Bill        @relation(fields: [billId], references: [id])
+  amount        Decimal     @db.Decimal(18, 2)
+
 
 model TaxRate {
   id            String         @id @default(cuid())
@@ -785,6 +827,7 @@ model Attachment {
   entityId   String
   fileUrl    String
   uploadedBy String
+  uploadedByUser User?       @relation("AttachmentUploadedBy", fields: [uploadedBy], references: [id])
   createdAt  DateTime     @default(now())
 
   @@index([orgId, entityType, entityId])
@@ -851,6 +894,7 @@ model WorkspaceRecord {
   amountMinor Int?
   metadata    Json?
   createdBy   String?
+  createdByUser User?      @relation("WorkspaceRecordCreatedBy", fields: [createdBy], references: [id])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -869,6 +913,7 @@ model ImportBatch {
   status           String
   createdRecordIds Json
   importedBy       String
+  importedByUser   User?        @relation("ImportBatchImportedBy", fields: [importedBy], references: [id])
   createdAt        DateTime     @default(now())
   reversedAt       DateTime?
 
