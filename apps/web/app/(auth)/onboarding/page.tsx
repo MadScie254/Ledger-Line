@@ -58,7 +58,7 @@ export default function OnboardingPage() {
       // Reload to pick up the updated session metadata (orgId)
       const supabase = createClient();
       await supabase.auth.refreshSession();
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     });
   }

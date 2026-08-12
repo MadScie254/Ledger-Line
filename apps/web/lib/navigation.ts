@@ -33,7 +33,7 @@ export interface NavItem {
 }
 
 export const navigation: NavItem[] = [
-  { title: "Home", href: "/", icon: Home },
+  { title: "Home", href: "/dashboard", icon: Home },
   {
     title: "Banking",
     href: "/banking/transactions",
