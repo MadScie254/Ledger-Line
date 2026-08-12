@@ -1,3 +1,4 @@
+import { minorToDecimal, decimalToMinor } from "@ledgerline/ledger-service";
 import { Prisma } from "@ledgerline/db";
 import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
@@ -107,9 +108,6 @@ async function answerQuestion(prisma: Prisma.TransactionClient | PrismaClientLik
   };
 }
 
-function decimalToMinor(amount: Prisma.Decimal) {
-  return Number(amount.mul(100).toDecimalPlaces(0, Prisma.Decimal.ROUND_HALF_UP).toString());
-}
 
 function startOfMonth() {
   const now = new Date();
@@ -133,3 +131,4 @@ type PrismaClientLike = {
     findMany: (args: unknown) => Promise<Array<{ id: string; code: string }>>;
   };
 };
+

@@ -12,7 +12,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ledgerline/types": "0.1.0"
+    "@ledgerline/types": "0.1.0",
+    "decimal.js": "^10.6.0"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

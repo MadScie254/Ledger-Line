@@ -1,4 +1,4 @@
-import { assertBalancedLines } from "@ledgerline/ledger-service";
+import { assertBalancedLines , minorToDecimal, decimalToMinor } from "@ledgerline/ledger-service";
 import { Prisma, type PrismaClient } from "@ledgerline/db";
 import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
@@ -390,6 +390,4 @@ function optionalDate(value: unknown) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function minorToDecimal(amountMinor: number) {
-  return new Prisma.Decimal(amountMinor).div(100);
-}
+

@@ -10,7 +10,7 @@ interface ModuleRouteContext {
   params: Promise<{ moduleKey: string }>;
 }
 
-export async function GET(_request: Request, context: ModuleRouteContext) {
+export async function GET(request: Request, context: ModuleRouteContext) {
   try {
     const { moduleKey } = await context.params;
     const definition = getModuleDefinition(moduleKey);

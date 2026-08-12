@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import type { Database } from "@ledgerline/db";
 
 /**
  * Middleware: refresh the Supabase session on every request.
@@ -16,7 +15,7 @@ import type { Database } from "@ledgerline/db";
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient<Database>(
+  const supabase = createServerClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_PUBLISHABLE_KEY!,
     {

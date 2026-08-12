@@ -1,5 +1,6 @@
 import { assertBalancedLines } from "@ledgerline/ledger-service";
 import { Prisma, type PrismaClient } from "@ledgerline/db";
+import { minorToDecimal, decimalToMinor } from "@ledgerline/ledger-service";
 import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
 import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
@@ -12,7 +13,7 @@ interface EntityRouteContext {
 
 type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "expenses" | "payments";
 
-export async function GET(_request: Request, context: EntityRouteContext) {
+export async function GET(request: Request, context: EntityRouteContext) {
   try {
     const { entity } = await context.params;
     const workspace = await requireWorkspace(request);
@@ -475,6 +476,7 @@ async function createEntityRecord(prisma: PrismaClient, orgId: string, userId: s
           ? await tx.invoice.findFirst({ where: { orgId, invoiceNo } })
           : null;
 
+        const depositAccount = await findAccountByCode(tx, orgId, depositCode);
         const row = await tx.paymentReceived.create({
           data: {
             orgId,
@@ -483,8 +485,7 @@ async function createEntityRecord(prisma: PrismaClient, orgId: string, userId: s
             amount: minorToDecimal(amountMinor),
             date: paymentDate,
             method,
-            depositAccountId: depositCode,
-            appliedTo: invoice ? [{ invoiceId: invoice.id, amountMinor }] : [],
+            depositAccountId: depositAccount.id,
             reference
           }
         });
@@ -502,10 +503,9 @@ async function createEntityRecord(prisma: PrismaClient, orgId: string, userId: s
           });
         }
 
-        const deposit = await findAccountByCode(tx, orgId, depositCode);
         const receivable = await findAccountByCode(tx, orgId, "1200");
         const lines = [
-          { accountId: deposit.id, debitMinor: amountMinor, creditMinor: 0 },
+          { accountId: depositAccount.id, debitMinor: amountMinor, creditMinor: 0 },
           { accountId: receivable.id, debitMinor: 0, creditMinor: amountMinor }
         ];
         assertBalancedLines(lines);
@@ -586,14 +586,6 @@ async function findAccountByCode(prisma: Prisma.TransactionClient | PrismaClient
   }
 
   return account;
-}
-
-function minorToDecimal(amountMinor: number) {
-  return new Prisma.Decimal(amountMinor).div(100);
-}
-
-function decimalToMinor(amount: Prisma.Decimal) {
-  return Number(amount.mul(100).toDecimalPlaces(0, Prisma.Decimal.ROUND_HALF_UP).toString());
 }
 
 function formatError(error: unknown) {

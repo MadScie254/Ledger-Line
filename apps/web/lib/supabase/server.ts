@@ -1,6 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import type { Database } from "@ledgerline/db";
 
 /**
  * Creates an @supabase/ssr server client that reads/writes cookies.
@@ -15,7 +14,7 @@ import type { Database } from "@ledgerline/db";
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
-  return createServerClient<Database>(
+  return createServerClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_PUBLISHABLE_KEY!,
     {

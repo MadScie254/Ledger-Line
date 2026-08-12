@@ -1,5 +1,6 @@
 import { Prisma, type PrismaClient } from "@ledgerline/db";
 import { NextRequest, NextResponse } from "next/server";
+import { decimalToMinor } from "@ledgerline/ledger-service";
 import { withDatabase } from "@/lib/database";
 import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
@@ -280,9 +281,7 @@ function parseBillStatus(value: unknown): "OPEN" | "PARTIAL" | "PAID" | "OVERDUE
     : undefined;
 }
 
-function decimalToMinor(amount: Prisma.Decimal) {
-  return Number(amount.mul(100).toDecimalPlaces(0, Prisma.Decimal.ROUND_HALF_UP).toString());
-}
+
 
 async function audit(
   prisma: PrismaClient,

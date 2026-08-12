@@ -6,5 +6,7 @@ export {
   calculateTrialBalance,
   formatMoneyMinor,
   postJournalEntry,
-  reverseJournalEntry
+  reverseJournalEntry,
+  minorToDecimal,
+  decimalToMinor
 } from "./ledger";

@@ -1,3 +1,4 @@
+import { minorToDecimal, decimalToMinor } from "@ledgerline/ledger-service";
 import { Prisma } from "@ledgerline/db";
 import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
@@ -119,9 +120,6 @@ export async function POST(request: Request) {
   }
 }
 
-function decimalToMinor(amount: Prisma.Decimal) {
-  return Number(amount.mul(100).toDecimalPlaces(0, Prisma.Decimal.ROUND_HALF_UP).toString());
-}
 
 interface TransactionRecord {
   id: string;
@@ -183,3 +181,4 @@ function daysBetween(leftDate: string, rightDate: string) {
   const diff = Math.abs(right.getTime() - left.getTime());
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
+

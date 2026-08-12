@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import type {
   Account,
   JournalEntry,
@@ -23,6 +24,14 @@ export function formatMoneyMinor(amountMinor: MoneyMinor, currency = "KES") {
     currency,
     maximumFractionDigits: 2
   }).format(amountMinor / CENTS_PER_UNIT);
+}
+
+export function minorToDecimal(amountMinor: number): Decimal {
+  return new Decimal(amountMinor).div(100);
+}
+
+export function decimalToMinor(amount: Decimal): number {
+  return Number(amount.mul(100).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toString());
 }
 
 export function assertBalancedLines(lines: JournalLineInput[]) {
