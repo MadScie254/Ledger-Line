@@ -543,7 +543,7 @@ model PaymentReceivedAllocation {
   invoiceId         String
   invoice           Invoice         @relation(fields: [invoiceId], references: [id])
   amount            Decimal         @db.Decimal(18, 2)
-
+}
 
 model RecurringTemplate {
   id             String       @id @default(cuid())
@@ -677,7 +677,7 @@ model BillPaymentAllocation {
   billId        String
   bill          Bill        @relation(fields: [billId], references: [id])
   amount        Decimal     @db.Decimal(18, 2)
-
+}
 
 model TaxRate {
   id            String         @id @default(cuid())
