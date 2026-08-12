@@ -1,8 +1,8 @@
 import { updateWorkspaceRecord } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
 import { getModuleDefinition } from "@/lib/module-registry";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -32,7 +32,8 @@ export async function PATCH(request: Request, context: RecordRouteContext) {
       return NextResponse.json({ error: "Title is required." }, { status: 422 });
     }
 
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const record = await withDatabase((prisma) => updateWorkspaceRecord(prisma, workspace, recordId, definition.moduleKey, {
       moduleKey: definition.moduleKey,
       title,

@@ -1,7 +1,7 @@
 import { Prisma } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -12,7 +12,8 @@ interface ReverseRouteContext {
 export async function POST(_request: Request, context: ReverseRouteContext) {
   try {
     const { batchId } = await context.params;
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const userId = workspace.userId ?? "system";
 
     const batch = await withDatabase((prisma) =>

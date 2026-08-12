@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -22,7 +22,8 @@ export async function POST(request: Request, context: ApprovalRequestRouteContex
     const expiresInHours = typeof payload.expiresInHours === "number" && Number.isFinite(payload.expiresInHours) ? payload.expiresInHours : 24;
     const expiresAt = new Date(Date.now() + Math.max(1, expiresInHours) * 60 * 60 * 1000);
 
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const userId = workspace.userId ?? "system";
 
     const result = await withDatabase((prisma) =>

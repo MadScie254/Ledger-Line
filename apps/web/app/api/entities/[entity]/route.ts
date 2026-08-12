@@ -1,8 +1,8 @@
 import { assertBalancedLines } from "@ledgerline/ledger-service";
 import { Prisma, type PrismaClient } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -15,7 +15,8 @@ type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "exp
 export async function GET(_request: Request, context: EntityRouteContext) {
   try {
     const { entity } = await context.params;
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
 
     return await withDatabase(async (prisma) => {
       const records = await listEntityRecords(prisma, workspace.orgId, entity as EntityKey);
@@ -35,7 +36,8 @@ export async function GET(_request: Request, context: EntityRouteContext) {
 export async function POST(request: Request, context: EntityRouteContext) {
   try {
     const { entity } = await context.params;
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const payload = (await request.json()) as Record<string, unknown>;
 
     return await withDatabase(async (prisma) => {

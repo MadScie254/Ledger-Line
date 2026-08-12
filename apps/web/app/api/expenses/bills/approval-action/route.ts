@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -15,7 +15,8 @@ export async function GET(request: Request) {
     }
 
     const tokenHash = sha256(token);
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
 
     const result = await withDatabase((prisma) =>
       prisma.$transaction(async (tx) => {

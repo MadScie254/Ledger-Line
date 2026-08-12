@@ -1,7 +1,7 @@
-﻿import { Prisma, type PrismaClient } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { Prisma, type PrismaClient } from "@ledgerline/db";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -14,7 +14,8 @@ type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "exp
 export async function PATCH(request: Request, context: EntityRecordRouteContext) {
   try {
     const { entity, recordId } = await context.params;
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const payload = (await request.json()) as Record<string, unknown>;
 
     const record = await withDatabase((prisma) =>

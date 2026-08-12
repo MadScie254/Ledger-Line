@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -26,7 +26,8 @@ interface ProfitAndLossResponse {
 
 export async function GET(request: Request) {
   try {
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const { searchParams } = new URL(request.url);
     const now = new Date();
     const startDate = searchParams.get("start") ? new Date(searchParams.get("start")!) : new Date(Date.UTC(now.getUTCFullYear(), 0, 1));

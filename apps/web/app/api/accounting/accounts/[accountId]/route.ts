@@ -1,8 +1,8 @@
 import { updateAccount } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { errorResponse, parseAccountInput, serializeAccount } from "@/lib/account-api";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -14,7 +14,8 @@ export async function PATCH(request: Request, context: AccountRouteContext) {
   try {
     const input = await parseAccountInput(request);
     const { accountId } = await context.params;
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const account = await withDatabase((prisma) => updateAccount(prisma, workspace, accountId, input));
 
     return NextResponse.json({ account: serializeAccount(account, 0) });

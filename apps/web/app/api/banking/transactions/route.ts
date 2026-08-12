@@ -1,13 +1,14 @@
 import { Prisma } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
 
     const transactions = await withDatabase((prisma) =>
       prisma.bankTransaction.findMany({
@@ -54,7 +55,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Description, amount, direction, and date are required." }, { status: 422 });
     }
 
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
 
     const record = await withDatabase(async (prisma) => {
       let connection = await prisma.bankConnection.findFirst({ where: { orgId: workspace.orgId } });

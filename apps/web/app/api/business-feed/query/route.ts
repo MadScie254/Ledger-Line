@@ -1,7 +1,7 @@
 import { Prisma } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
@@ -14,7 +14,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Question is required." }, { status: 422 });
     }
 
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const answer = await withDatabase((prisma) => answerQuestion(prisma, workspace.orgId, question));
     return NextResponse.json(answer);
   } catch (error) {

@@ -1,14 +1,15 @@
 import { createAccount, listAccounts } from "@ledgerline/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { errorResponse, parseAccountInput, serializeAccount } from "@/lib/account-api";
 import { withDatabase } from "@/lib/database";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const accounts = await withDatabase((prisma) => listAccounts(prisma, workspace.orgId));
 
     return NextResponse.json({
@@ -31,7 +32,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const input = await parseAccountInput(request);
-    const workspace = getCurrentWorkspace();
+    const workspace = await requireWorkspace(request);
+    if (isWorkspaceError(workspace)) return workspace;
     const account = await withDatabase((prisma) => createAccount(prisma, workspace, input));
 
     return NextResponse.json({ account: serializeAccount(account, 0) }, { status: 201 });
