@@ -11,7 +11,7 @@ interface EntityRouteContext {
   params: Promise<{ entity: string }>;
 }
 
-type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "expenses" | "payments";
+type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "expenses" | "payments" | "sales-receipts" | "sales-orders";
 
 export async function GET(request: Request, context: EntityRouteContext) {
   try {
@@ -146,11 +146,42 @@ async function listEntityRecords(prisma: PrismaClient, orgId: string, entity: En
         metadata: { invoiceId: row.invoiceId }
       }));
     }
+    case "sales-receipts": {
+      const rows = await prisma.salesReceipt.findMany({
+        where: { orgId },
+        include: { customer: { select: { displayName: true } } },
+        orderBy: [{ date: "desc" }]
+      });
+      return rows.map((row) => ({
+        id: row.id,
+        title: `Receipt ${row.id.slice(0, 8).toUpperCase()}`,
+        subtitle: row.customer?.displayName ?? "Walk-in",
+        status: "Paid",
+        amountMinor: 0,
+        createdAt: row.date.toISOString(),
+        metadata: { paymentMethod: row.paymentMethod }
+      }));
+    }
+    case "sales-orders": {
+      const rows = await prisma.salesOrder.findMany({
+        where: { orgId },
+        include: { customer: { select: { displayName: true } } },
+        orderBy: [{ id: "desc" }]
+      });
+      return rows.map((row) => ({
+        id: row.id,
+        title: `SO-${row.id.slice(0, 8).toUpperCase()}`,
+        subtitle: row.customer?.displayName ?? "—",
+        status: row.status,
+        amountMinor: 0,
+        createdAt: new Date().toISOString(),
+        metadata: { fulfillmentStatus: row.fulfillmentStatus ?? "Pending" }
+      }));
+    }
     default:
       throw new Error("Entity route is not registered.");
   }
 }
-
 async function createEntityRecord(prisma: PrismaClient, orgId: string, userId: string, entity: EntityKey, payload: Record<string, unknown>) {
   switch (entity) {
     case "customers": {
@@ -542,11 +573,78 @@ async function createEntityRecord(prisma: PrismaClient, orgId: string, userId: s
         };
       });
     }
+    case "sales-receipts": {
+      const receiptCustomerName = optionalString(payload.subtitle);
+      const paymentMethod = optionalString(payload.paymentMethod) ?? "cash";
+      const depositCode = optionalString(payload.depositAccountCode) ?? "1000";
+      const receiptDate = optionalDate(payload.date) ?? new Date();
+
+      return prisma.$transaction(async (tx) => {
+        const customer = receiptCustomerName
+          ? await tx.customer.findFirst({ where: { orgId, displayName: receiptCustomerName } })
+          : null;
+        const depositAccount = await findAccountByCode(tx, orgId, depositCode);
+
+        const row = await tx.salesReceipt.create({
+          data: {
+            orgId,
+            customerId: customer?.id,
+            date: receiptDate,
+            lines: payload.lines ?? [],
+            paymentMethod,
+            depositAccountId: depositAccount.id
+          }
+        });
+
+        await audit(tx, orgId, userId, "sales-receipt.created", row.id, { after: { paymentMethod, date: receiptDate } });
+
+        return {
+          id: row.id,
+          title: `Receipt ${row.id.slice(0, 8).toUpperCase()}`,
+          subtitle: customer?.displayName ?? "Walk-in",
+          status: "Paid",
+          amountMinor: 0,
+          createdAt: row.date.toISOString(),
+          metadata: { paymentMethod: row.paymentMethod }
+        };
+      });
+    }
+    case "sales-orders": {
+      const orderCustomerName = optionalString(payload.subtitle);
+      const orderStatus = optionalString(payload.status) ?? "DRAFT";
+
+      return prisma.$transaction(async (tx) => {
+        const customer = orderCustomerName
+          ? await tx.customer.findFirst({ where: { orgId, displayName: orderCustomerName } })
+          : null;
+
+        const row = await tx.salesOrder.create({
+          data: {
+            orgId,
+            customerId: customer?.id,
+            lines: payload.lines ?? [],
+            status: orderStatus,
+            fulfillmentStatus: "Pending"
+          }
+        });
+
+        await audit(tx, orgId, userId, "sales-order.created", row.id, { after: { status: orderStatus } });
+
+        return {
+          id: row.id,
+          title: `SO-${row.id.slice(0, 8).toUpperCase()}`,
+          subtitle: customer?.displayName ?? "—",
+          status: row.status,
+          amountMinor: 0,
+          createdAt: new Date().toISOString(),
+          metadata: { fulfillmentStatus: row.fulfillmentStatus ?? "Pending" }
+        };
+      });
+    }
     default:
       throw new Error("Entity route is not registered.");
   }
 }
-
 function requiredString(value: unknown, field: string) {
   if (typeof value !== "string" || !value.trim()) {
     throw new Error(`${field} is required.`);

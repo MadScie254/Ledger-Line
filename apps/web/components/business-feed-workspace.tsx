@@ -3,7 +3,8 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { LoaderCircle, Sparkles } from "lucide-react";
+import { LoaderCircle, Sparkles, Newspaper, TrendingUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button, DoubleRule, Field, Input } from "@ledgerline/ui";
 
 interface QueryAnswer {
@@ -53,8 +54,102 @@ export function BusinessFeedWorkspace() {
           </div>
         ) : null}
       </section>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <MarketPulseCard />
+        <FxMovementsCard />
+      </div>
     </div>
   );
+
+  function MarketPulseCard() {
+    const { data, isLoading } = useQuery({
+      queryKey: ["business-news"],
+      queryFn: () => fetch("/api/business-news").then((r) => r.json()),
+    });
+
+    const items = data?.items?.slice(0, 5) ?? [];
+
+    return (
+      <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger flex flex-col">
+        <h2 className="flex items-center gap-2 font-serif text-xl font-semibold text-ink-900">
+          <Newspaper className="h-5 w-5 text-slate-400" />
+          Market Pulse
+        </h2>
+        <p className="mt-1 text-sm text-slate-500 mb-4">Latest headlines from Kenya business news.</p>
+
+        {isLoading ? (
+          <div className="space-y-3 flex-1">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-10 animate-pulse rounded-[4px] bg-slate-100" />
+            ))}
+          </div>
+        ) : items.length > 0 ? (
+          <ul className="space-y-4 flex-1">
+            {items.map((item: any, i: number) => (
+              <li key={i} className="text-sm">
+                <a href={item.link} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 hover:text-focus-blue-600 hover:underline line-clamp-2">
+                  {item.title}
+                </a>
+                <p className="mt-1 text-xs text-slate-500">{item.source}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-slate-500 py-4 flex-1">No news available.</p>
+        )}
+      </section>
+    );
+  }
+
+  function FxMovementsCard() {
+    const { data, isLoading } = useQuery({
+      queryKey: ["currencies"],
+      queryFn: () => fetch("/api/settings/currencies").then((r) => r.json()),
+    });
+
+    const rates = data?.rates ?? [];
+    const base = data?.baseCurrency ?? "KES";
+
+    return (
+      <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-ledger flex flex-col">
+        <h2 className="flex items-center gap-2 font-serif text-xl font-semibold text-ink-900">
+          <TrendingUp className="h-5 w-5 text-slate-400" />
+          FX Movements
+        </h2>
+        <p className="mt-1 text-sm text-slate-500 mb-4">Latest ECB rates against your base ({base}).</p>
+
+        {isLoading ? (
+          <div className="space-y-3 flex-1">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-10 animate-pulse rounded-[4px] bg-slate-100" />
+            ))}
+          </div>
+        ) : rates.length > 0 ? (
+          <div className="flex-1">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-xs font-medium uppercase tracking-wide text-slate-400">
+                  <th className="pb-2 pr-4">Currency</th>
+                  <th className="pb-2">Rate (1 {base})</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {rates.slice(0, 5).map((rate: any) => (
+                  <tr key={rate.id} className="hover:bg-paper-100">
+                    <td className="py-2.5 pr-4 font-medium text-ink-900">{rate.currencyCode}</td>
+                    <td className="py-2.5 font-mono">{Number(rate.rateToBase).toFixed(4)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500 py-4 flex-1">No FX rates found. Configure them in Settings.</p>
+        )}
+      </section>
+    );
+  }
 
   async function runQuery(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
