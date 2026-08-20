@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
           },
         });
 
-        // 3. Create Owner Role
+        // 3. Create Default Roles
         const ownerRole = await tx.role.create({
           data: {
             orgId: org.id,
@@ -70,6 +70,38 @@ export async function POST(request: NextRequest) {
             isSystemRole: true,
             permissions: { all: true },
           },
+        });
+
+        await tx.role.createMany({
+          data: [
+            {
+              orgId: org.id,
+              name: "Bookkeeper",
+              isSystemRole: true,
+              permissions: {
+                accounting: { view: true, create: true, edit: true, delete: true },
+                banking: { view: true, create: true, edit: true, delete: true },
+                reports: { view: true, create: true, edit: true, delete: true },
+              },
+            },
+            {
+              orgId: org.id,
+              name: "Viewer",
+              isSystemRole: true,
+              permissions: {
+                sales: { view: true, create: false, edit: false, delete: false },
+                expenses: { view: true, create: false, edit: false, delete: false },
+                banking: { view: true, create: false, edit: false, delete: false },
+                accounting: { view: true, create: false, edit: false, delete: false },
+                payroll: { view: true, create: false, edit: false, delete: false },
+                tax: { view: true, create: false, edit: false, delete: false },
+                inventory: { view: true, create: false, edit: false, delete: false },
+                reports: { view: true, create: false, edit: false, delete: false },
+                team: { view: true, create: false, edit: false, delete: false },
+                settings: { view: true, create: false, edit: false, delete: false },
+              },
+            },
+          ],
         });
 
         // 4. Create Membership
