@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { EstimatesWorkspace } from "@/components/estimates-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="sales-estimates" />;
+  return <EstimatesWorkspace />;
 }

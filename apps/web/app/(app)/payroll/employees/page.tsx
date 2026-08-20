@@ -1,5 +1,6 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { EmployeesWorkspace } from "@/components/employees-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="payroll-employees" />;
+  return <EmployeesWorkspace />;
 }
+
