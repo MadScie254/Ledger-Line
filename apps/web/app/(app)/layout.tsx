@@ -22,7 +22,7 @@ export default async function ProductLayout({
     redirect("/login");
   }
 
-  const orgId: string | undefined = user.user_metadata?.orgId;
+  const orgId = user?.app_metadata?.orgId;
   if (!orgId) {
     redirect("/onboarding");
   }

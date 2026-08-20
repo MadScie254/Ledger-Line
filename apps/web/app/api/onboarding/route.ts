@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { withDatabase } from "@/lib/database";
 
+import { adminAuthClient } from "@/lib/supabase/admin";
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createSupabaseServerClient();
@@ -17,7 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (user.user_metadata?.orgId) {
+    if (user.app_metadata?.orgId) {
       return NextResponse.json(
         { error: "User already belongs to an organization." },
         { status: 400 }
@@ -97,9 +99,9 @@ export async function POST(request: NextRequest) {
       });
     });
 
-    // Update user metadata in Supabase
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: { orgId },
+    // Update user app_metadata in Supabase using the admin client
+    const { error: updateError } = await adminAuthClient.auth.admin.updateUserById(user.id, {
+      app_metadata: { orgId },
     });
 
     if (updateError) {

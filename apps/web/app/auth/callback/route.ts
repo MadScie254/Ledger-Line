@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     if (!error && data.user) {
       // If the user has no org yet, send them to onboarding.
-      const orgId = data.user.user_metadata?.orgId;
+      const orgId = data.user.app_metadata?.orgId;
       const redirectTo = orgId ? next : "/onboarding";
       return NextResponse.redirect(`${origin}${redirectTo}`);
     }

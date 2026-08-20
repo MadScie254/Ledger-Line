@@ -45,8 +45,8 @@ export async function requireWorkspace(
   }
 
   // Resolve org from the OrgMembership table via user's metadata or DB lookup.
-  // The orgId is stored in user.user_metadata.orgId after onboarding.
-  const orgId: string | undefined = user.user_metadata?.orgId;
+  // The orgId is stored in user.app_metadata.orgId after onboarding.
+  const orgId: string | undefined = user.app_metadata?.orgId;
 
   if (!orgId) {
     return NextResponse.json(
