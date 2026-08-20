@@ -10,10 +10,10 @@ interface BankTransaction {
   id: string;
   date: string;
   description: string;
-  amountMinor: string;
+  amount: string; // Decimal as string
   direction: "IN" | "OUT";
   status: "UNREVIEWED" | "CATEGORIZED" | "MATCHED" | "EXCLUDED";
-  connection: {
+  bankConnection: {
     institutionName: string;
     currency: string;
   };
@@ -80,7 +80,7 @@ export function BankingReconcileWorkspace() {
                 cell: (row) => (
                   <div>
                     <div className="font-medium text-ink-900">{row.description}</div>
-                    <div className="text-xs text-slate-500">{row.connection.institutionName}</div>
+                    <div className="text-xs text-slate-500">{row.bankConnection.institutionName}</div>
                   </div>
                 ),
               },
@@ -98,7 +98,7 @@ export function BankingReconcileWorkspace() {
                 header: "Amount",
                 cell: (row) => (
                   <span className={`font-semibold font-mono ${row.direction === "IN" ? "text-ledger-green-700" : "text-ink-900"}`}>
-                    {row.direction === "IN" ? "+" : "-"}{formatMoneyMinor(Math.round(Number(row.amountMinor) * 100), row.connection.currency)}
+                    {row.direction === "IN" ? "+" : "-"}{formatMoneyMinor(Math.round(Number(row.amount) * 100), row.bankConnection.currency)}
                   </span>
                 ),
                 align: "right",
@@ -107,7 +107,7 @@ export function BankingReconcileWorkspace() {
                 key: "action",
                 header: "",
                 cell: () => (
-                  <Button variant="outline" className="h-8 py-0 px-3">
+                  <Button variant="secondary" className="h-8 py-0 px-3">
                     Match
                   </Button>
                 ),

@@ -7,23 +7,20 @@ export async function GET(request: Request) {
     const workspace = await requireWorkspace(request);
     if (isWorkspaceError(workspace)) return workspace;
 
-    const transactions = await withDatabase(async (prisma) => {
-      return prisma.bankTransaction.findMany({
-        where: {
-          bankConnection: { orgId: workspace.orgId },
-          status: "UNREVIEWED",
-        },
+    const payments = await withDatabase(async (prisma) => {
+      return prisma.billPayment.findMany({
+        where: { orgId: workspace.orgId },
         include: {
-          bankConnection: { select: { institutionName: true, currency: true } },
+          bill: { select: { id: true, billNo: true, vendor: { select: { displayName: true } } } },
         },
         orderBy: { date: "desc" },
       });
     });
 
-    return NextResponse.json(transactions);
+    return NextResponse.json(payments);
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch transactions." },
+      { error: error instanceof Error ? error.message : "Failed to fetch bill payments." },
       { status: 400 }
     );
   }

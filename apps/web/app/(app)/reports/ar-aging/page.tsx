@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { ArAgingWorkspace } from "@/components/ar-aging-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="reports-ar-aging" />;
+  return <ArAgingWorkspace />;
 }

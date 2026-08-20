@@ -202,18 +202,6 @@ export const moduleDefinitions = {
     description: "Saved P&L report variants.",
     createLabel: "Create view"
   },
-  "reports-ar-aging": {
-    moduleKey: "reports-ar-aging",
-    title: "A/R aging",
-    description: "Saved accounts receivable aging variants.",
-    createLabel: "Create view"
-  },
-  "reports-ap-aging": {
-    moduleKey: "reports-ap-aging",
-    title: "A/P aging",
-    description: "Saved accounts payable aging variants.",
-    createLabel: "Create view"
-  },
 
   "team-accountant-access": {
     moduleKey: "team-accountant-access",

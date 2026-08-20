@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { ApAgingWorkspace } from "@/components/ap-aging-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="reports-ap-aging" />;
+  return <ApAgingWorkspace />;
 }
