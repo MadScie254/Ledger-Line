@@ -21,15 +21,20 @@ import { Button, cn } from "@ledgerline/ui";
 import { navigation, quickActions } from "@/lib/navigation";
 
 const COLLAPSED_KEY = "ll_sidebar_collapsed";
+const OPEN_SECTION_KEY = "ll_sidebar_open_section";
 
 // ─── Sidebar Nav ────────────────────────────────────────────────────────────
 
 function SidebarNav({
   collapsed,
   pathname,
+  openSection,
+  setOpenSection,
 }: {
   collapsed: boolean;
   pathname: string;
+  openSection: string | null;
+  setOpenSection: (section: string | null) => void;
 }) {
   return (
     <nav aria-label="Primary" className={cn("flex-1 space-y-1 py-4", collapsed ? "px-2" : "px-3")}>
@@ -37,25 +42,43 @@ function SidebarNav({
         const Icon = item.icon;
         const isActive =
           pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+        const hasChildren = item.children && item.children.length > 0;
+        const isOpen = openSection === item.href;
 
         return (
           <div key={item.href}>
-            <Link
-              href={item.href}
-              title={collapsed ? item.title : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium text-white/72 transition hover:bg-white/[0.08] hover:text-white focus-ring",
-                isActive && "bg-white/10 text-white shadow-[inset_3px_0_0_var(--brass-500)]",
-                collapsed && "justify-center px-2"
-              )}
-            >
-              {Icon ? <Icon className="h-4 w-4 shrink-0" aria-hidden="true" /> : <span className="h-4 w-4 shrink-0" />}
-              {!collapsed && <span className="truncate">{item.title}</span>}
-            </Link>
+            {hasChildren && !collapsed ? (
+              <button
+                onClick={() => setOpenSection(isOpen ? null : item.href)}
+                className={cn(
+                  "flex w-full items-center justify-between gap-3 rounded-[6px] px-3 py-2 text-sm font-medium text-white/72 transition hover:bg-white/[0.08] hover:text-white focus-ring",
+                  isActive && "bg-white/10 text-white shadow-[inset_3px_0_0_var(--brass-500)]"
+                )}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  {Icon ? <Icon className="h-4 w-4 shrink-0" aria-hidden="true" /> : <span className="h-4 w-4 shrink-0" />}
+                  <span className="truncate">{item.title}</span>
+                </div>
+                <ChevronDown className={cn("h-4 w-4 shrink-0 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
+              </button>
+            ) : (
+              <Link
+                href={item.href}
+                title={collapsed ? item.title : undefined}
+                className={cn(
+                  "flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium text-white/72 transition hover:bg-white/[0.08] hover:text-white focus-ring",
+                  isActive && "bg-white/10 text-white shadow-[inset_3px_0_0_var(--brass-500)]",
+                  collapsed && "justify-center px-2"
+                )}
+              >
+                {Icon ? <Icon className="h-4 w-4 shrink-0" aria-hidden="true" /> : <span className="h-4 w-4 shrink-0" />}
+                {!collapsed && <span className="truncate">{item.title}</span>}
+              </Link>
+            )}
 
-            {!collapsed && isActive && item.children ? (
+            {!collapsed && isOpen && hasChildren ? (
               <div className="ml-7 mt-1 space-y-1 border-l border-white/10 pl-2">
-                {item.children.map((child) => {
+                {item.children!.map((child) => {
                   const childActive = pathname === child.href;
                   return (
                     <Link
@@ -86,11 +109,15 @@ function MobileDrawer({
   onClose,
   pathname,
   orgName,
+  openSection,
+  setOpenSection,
 }: {
   open: boolean;
   onClose: () => void;
   pathname: string;
   orgName: string;
+  openSection: string | null;
+  setOpenSection: (section: string | null) => void;
 }) {
   // Close on pathname change
   useEffect(() => { onClose(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -134,7 +161,7 @@ function MobileDrawer({
           </button>
         </div>
 
-        <SidebarNav collapsed={false} pathname={pathname} />
+        <SidebarNav collapsed={false} pathname={pathname} openSection={openSection} setOpenSection={setOpenSection} />
 
         <div className="border-t border-white/10 p-4">
           <div className="rounded-[8px] border border-white/10 bg-white/5 p-3">
@@ -248,6 +275,22 @@ export function AppShell({
     return localStorage.getItem(COLLAPSED_KEY) === "true";
   });
 
+  const [openSectionState, setOpenSectionState] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const stored = localStorage.getItem(OPEN_SECTION_KEY);
+    if (stored) return stored;
+    return navigation.find((item) => item.href !== "/" && pathname.startsWith(item.href))?.href ?? null;
+  });
+
+  const setOpenSection = useCallback((section: string | null) => {
+    setOpenSectionState(section);
+    if (section) {
+      localStorage.setItem(OPEN_SECTION_KEY, section);
+    } else {
+      localStorage.removeItem(OPEN_SECTION_KEY);
+    }
+  }, []);
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const toggleCollapsed = useCallback(() => {
@@ -292,7 +335,7 @@ export function AppShell({
           )}
         </div>
 
-        <SidebarNav collapsed={collapsed} pathname={pathname} />
+        <SidebarNav collapsed={collapsed} pathname={pathname} openSection={openSectionState} setOpenSection={setOpenSection} />
 
         {/* Bottom panel */}
         {!collapsed && (
@@ -334,6 +377,8 @@ export function AppShell({
         onClose={() => setMobileOpen(false)}
         pathname={pathname}
         orgName={orgName}
+        openSection={openSectionState}
+        setOpenSection={setOpenSection}
       />
 
       {/* ── Main content ──────────────────────────────────────────────────── */}
