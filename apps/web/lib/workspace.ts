@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { withDatabase } from "@/lib/database";
 
 /**
  * Workspace context derived from a verified Supabase session.
@@ -9,6 +10,8 @@ export interface WorkspaceContext {
   userId: string;
   orgId: string;
   email: string;
+  /** ISO 4217 currency code for the organisation's base currency (e.g. "KES"). */
+  baseCurrency: string;
 }
 
 /**
@@ -23,7 +26,7 @@ export interface WorkspaceContext {
  *   ```ts
  *   const ctx = await requireWorkspace(request);
  *   if (ctx instanceof NextResponse) return ctx; // 401/403
- *   const { orgId, userId } = ctx;
+ *   const { orgId, userId, baseCurrency } = ctx;
  *   ```
  */
 export async function requireWorkspace(
@@ -55,10 +58,27 @@ export async function requireWorkspace(
     );
   }
 
+  // Fetch the org's base currency from the database.
+  let baseCurrency = "KES";
+  try {
+    const org = await withDatabase((prisma) =>
+      prisma.organization.findUnique({
+        where: { id: orgId },
+        select: { baseCurrency: true },
+      })
+    );
+    if (org?.baseCurrency) {
+      baseCurrency = org.baseCurrency;
+    }
+  } catch {
+    // Non-fatal: fall back to KES if DB call fails
+  }
+
   return {
     userId: user.id,
     orgId,
     email: user.email ?? "",
+    baseCurrency,
   };
 }
 

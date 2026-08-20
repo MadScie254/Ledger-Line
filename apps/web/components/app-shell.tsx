@@ -284,6 +284,7 @@ export function AppShell({
   });
 
   const orgName = orgData?.name || initialOrgName;
+  const baseCurrency: string = orgData?.baseCurrency ?? "KES";
   const isTbClean = tbData?.isBalanced ?? true;
 
   const [collapsed, setCollapsed] = useState(() => {

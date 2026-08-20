@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BarChart3, LoaderCircle, RefreshCw } from "lucide-react";
 import { Button, DataTable, DoubleRule, EmptyState } from "@ledgerline/ui";
+import { formatMoneyMinor } from "@/lib/format-money";
 
 interface ProfitAndLossLine {
   accountId: string;
@@ -147,8 +148,8 @@ function Metric({ label, value, tone = "neutral" }: { label: string; value: stri
   );
 }
 
-function formatMoney(valueMinor: number) {
-  return new Intl.NumberFormat("en-KE", { style: "currency", currency: "KES", maximumFractionDigits: 0 }).format(valueMinor / 100);
+function formatMoney(valueMinor: number, currency = "KES") {
+  return formatMoneyMinor(valueMinor, currency, 0);
 }
 
 function formatDate(value: string) {

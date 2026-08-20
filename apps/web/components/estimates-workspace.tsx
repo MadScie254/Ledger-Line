@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { LoaderCircle, Plus, RefreshCw } from "lucide-react";
 import { Button, DataTable, DoubleRule, Field, Input, StatusPill, type DataTableColumn } from "@ledgerline/ui";
+import { formatMoney } from "@/lib/format-money";
 
 interface EstimateLine {
   description: string;
@@ -130,7 +131,7 @@ export function EstimatesWorkspace() {
       align: "right",
       cell: (e) => (
         <span className="font-mono text-xs text-slate-700">
-          {Number(e.total).toLocaleString("en-KE", { style: "currency", currency: e.currency || "KES" })}
+          {formatMoney(Number(e.total), e.currency || "KES")}
         </span>
       ),
     },

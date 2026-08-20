@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { LoaderCircle, Plus, RefreshCw, User } from "lucide-react";
 import { Button, DataTable, DoubleRule, Field, Input, Select, StatusPill, type DataTableColumn } from "@ledgerline/ui";
+import { formatMoneyMinor } from "@/lib/format-money";
 
 interface Employee {
   id: string;
@@ -17,7 +18,7 @@ interface Employee {
   status: string;
 }
 
-export function EmployeesWorkspace() {
+export function EmployeesWorkspace({ baseCurrency = "KES" }: { baseCurrency?: string }) {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -106,10 +107,7 @@ export function EmployeesWorkspace() {
       align: "right",
       cell: (e) => (
         <span className="font-mono text-xs text-slate-700">
-          {((e.salaryStructure?.baseSalaryMinor ?? 0) / 100).toLocaleString("en-KE", {
-            style: "currency",
-            currency: "KES",
-          })}
+          {formatMoneyMinor(e.salaryStructure?.baseSalaryMinor ?? 0, baseCurrency)}
         </span>
       ),
     },

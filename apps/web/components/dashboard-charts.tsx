@@ -15,6 +15,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import { formatMoneyMinor } from "@/lib/format-money";
 
 const palette = ["#0B1B33", "#B8863B", "#0F5132", "#A23E1D", "#2C5EAA"];
 
@@ -29,7 +30,7 @@ interface ExpensePoint {
   value: number;
 }
 
-export function CashFlowChart({ data }: { data: CashPoint[] }) {
+export function CashFlowChart({ data, currency = "KES" }: { data: CashPoint[]; currency?: string }) {
   return (
     <div className="h-[320px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -42,7 +43,7 @@ export function CashFlowChart({ data }: { data: CashPoint[] }) {
             tickFormatter={(value) => `${Number(value) / 1000000}m`}
             tick={{ fill: "#5B6472", fontSize: 12 }}
           />
-          <Tooltip formatter={(value) => currency(Number(value) * 100)} labelStyle={{ color: "#0B1B33" }} />
+          <Tooltip formatter={(value) => formatMoneyMinor(Number(value) * 100, currency)} labelStyle={{ color: "#0B1B33" }} />
           <Legend iconType="line" />
           <Area type="monotone" dataKey="actual" name="Actual" stroke="#0B1B33" fill="#0B1B33" fillOpacity={0.12} strokeWidth={2} />
           <Area
@@ -60,7 +61,7 @@ export function CashFlowChart({ data }: { data: CashPoint[] }) {
   );
 }
 
-export function ExpenseDonut({ data }: { data: ExpensePoint[] }) {
+export function ExpenseDonut({ data, currency = "KES" }: { data: ExpensePoint[]; currency?: string }) {
   return (
     <div className="h-[266px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -70,7 +71,7 @@ export function ExpenseDonut({ data }: { data: ExpensePoint[] }) {
               <Cell key={entry.name} fill={palette[index % palette.length]} />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => currency(Number(value) * 100)} />
+          <Tooltip formatter={(value) => formatMoneyMinor(Number(value) * 100, currency)} />
           <Legend iconType="circle" layout="vertical" align="right" verticalAlign="middle" />
         </PieChart>
       </ResponsiveContainer>
@@ -78,7 +79,7 @@ export function ExpenseDonut({ data }: { data: ExpensePoint[] }) {
   );
 }
 
-export function ProfitComparison() {
+export function ProfitComparison({ currency = "KES" }: { currency?: string }) {
   const data = [
     { label: "Prior", income: 1840, expense: 1320 },
     { label: "Current", income: 1942, expense: 1665 }
@@ -91,19 +92,11 @@ export function ProfitComparison() {
           <CartesianGrid stroke="#D9DEE6" strokeDasharray="4 4" vertical={false} />
           <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
           <YAxis tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
-          <Tooltip formatter={(value) => `KES ${Number(value).toLocaleString("en-KE")}k`} />
+          <Tooltip formatter={(value) => `${currency} ${Number(value).toLocaleString()}k`} />
           <Bar dataKey="income" name="Income" fill="#0F5132" radius={[4, 4, 0, 0]} />
           <Bar dataKey="expense" name="Expenses" fill="#A23E1D" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
-}
-
-function currency(amountMinor: number) {
-  return new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    maximumFractionDigits: 2
-  }).format(amountMinor / 100);
 }
