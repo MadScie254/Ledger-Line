@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button, cn } from "@ledgerline/ui";
 import { navigation, quickActions } from "@/lib/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 const COLLAPSED_KEY = "ll_sidebar_collapsed";
 const OPEN_SECTION_KEY = "ll_sidebar_open_section";
@@ -111,6 +112,7 @@ function MobileDrawer({
   orgName,
   openSection,
   setOpenSection,
+  isTbClean,
 }: {
   open: boolean;
   onClose: () => void;
@@ -118,6 +120,7 @@ function MobileDrawer({
   orgName: string;
   openSection: string | null;
   setOpenSection: (section: string | null) => void;
+  isTbClean: boolean;
 }) {
   // Close on pathname change
   useEffect(() => { onClose(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -166,11 +169,11 @@ function MobileDrawer({
         <div className="border-t border-white/10 p-4">
           <div className="rounded-[8px] border border-white/10 bg-white/5 p-3">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <ShieldCheck className="h-4 w-4 text-brass-400" aria-hidden="true" />
-              Trial balance clean
+              <ShieldCheck className={cn("h-4 w-4", isTbClean ? "text-brass-400" : "text-rust-500")} aria-hidden="true" />
+              {isTbClean ? "Trial balance clean" : "Trial balance out of sync"}
             </div>
             <p className="mt-2 text-xs leading-5 text-white/56">
-              All posted journals pass exact debit-credit validation.
+              {isTbClean ? "All posted journals pass exact debit-credit validation." : "Debit and credit totals do not match."}
             </p>
           </div>
         </div>
@@ -262,13 +265,26 @@ function GlobalSearch() {
 
 export function AppShell({
   children,
-  orgName = "My Organisation",
+  orgName: initialOrgName = "My Organisation",
 }: {
   children: ReactNode;
   orgName?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const { data: orgData } = useQuery({
+    queryKey: ["company-settings"],
+    queryFn: () => fetch("/api/settings/company").then((res) => res.json()),
+  });
+
+  const { data: tbData } = useQuery({
+    queryKey: ["trial-balance"],
+    queryFn: () => fetch("/api/reports/trial-balance").then((res) => res.json()),
+  });
+
+  const orgName = orgData?.name || initialOrgName;
+  const isTbClean = tbData?.isBalanced ?? true;
 
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -327,8 +343,8 @@ export function AppShell({
                   <p className="mt-1 text-xs text-white/56 truncate">{orgName}</p>
                 </div>
               </Link>
-              <button className="mt-4 flex w-full items-center justify-between rounded-[6px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/82 focus-ring">
-                <span className="truncate">Kenya entity</span>
+              <button onClick={() => router.push('/settings/company')} className="mt-4 flex w-full items-center justify-between rounded-[6px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/82 hover:bg-white/10 transition focus-ring">
+                <span className="truncate">{orgName}</span>
                 <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
               </button>
             </>
@@ -342,11 +358,11 @@ export function AppShell({
           <div className="border-t border-white/10 p-4">
             <div className="rounded-[8px] border border-white/10 bg-white/5 p-3">
               <div className="flex items-center gap-2 text-sm font-semibold">
-                <ShieldCheck className="h-4 w-4 text-brass-400" aria-hidden="true" />
-                Trial balance clean
+                <ShieldCheck className={cn("h-4 w-4", isTbClean ? "text-brass-400" : "text-rust-500")} aria-hidden="true" />
+                {isTbClean ? "Trial balance clean" : "Trial balance out of sync"}
               </div>
               <p className="mt-2 text-xs leading-5 text-white/56">
-                All posted journals pass exact debit-credit validation.
+                {isTbClean ? "All posted journals pass exact debit-credit validation." : "Debit and credit totals do not match."}
               </p>
             </div>
           </div>
@@ -379,6 +395,7 @@ export function AppShell({
         orgName={orgName}
         openSection={openSectionState}
         setOpenSection={setOpenSection}
+        isTbClean={isTbClean}
       />
 
       {/* ── Main content ──────────────────────────────────────────────────── */}
@@ -399,7 +416,7 @@ export function AppShell({
 
             {/* Actions */}
             <div className="hidden items-center gap-2 md:flex shrink-0">
-              <Button variant="accent" size="sm">
+              <Button variant="accent" size="sm" onClick={() => router.push('/sales/invoices')}>
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 New
               </Button>

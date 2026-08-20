@@ -181,15 +181,15 @@ export function buildProfitAndLoss(accounts: Account[], entries: JournalEntry[],
         continue;
       }
 
-      if (account.type === "income") {
+      if (account.type === "INCOME") {
         incomeMinor += line.creditMinor - line.debitMinor;
       }
 
-      if (account.type === "cogs") {
+      if (account.type === "COGS") {
         cogsMinor += line.debitMinor - line.creditMinor;
       }
 
-      if (account.type === "expense") {
+      if (account.type === "EXPENSE") {
         expenseMinor += line.debitMinor - line.creditMinor;
       }
     }

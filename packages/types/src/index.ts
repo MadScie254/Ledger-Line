@@ -2,7 +2,7 @@ export type CurrencyCode = "KES" | "UGX" | "TZS" | "RWF" | "USD" | "EUR" | "GBP"
 
 export type MoneyMinor = number;
 
-export type AccountType = "asset" | "liability" | "equity" | "income" | "cogs" | "expense";
+export type AccountType = "ASSET" | "LIABILITY" | "EQUITY" | "INCOME" | "COGS" | "EXPENSE";
 
 export type JournalSourceType =
   | "manual"

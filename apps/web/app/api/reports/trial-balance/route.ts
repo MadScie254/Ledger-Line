@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
 import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
+import { calculateTrialBalance } from "@ledgerline/ledger-service";
 
 export const runtime = "nodejs";
 
@@ -15,40 +16,36 @@ export async function GET(request: Request) {
         orderBy: { code: 'asc' }
       });
 
-      const lines = await prisma.journalLine.findMany({
-        where: {
-          journalEntry: {
-            orgId: workspace.orgId,
-          }
-        },
+      const entries = await prisma.journalEntry.findMany({
+        where: { orgId: workspace.orgId },
+        include: { lines: true }
       });
 
-      const balances = new Map<string, number>();
+      // The types between DB model and ledger-service differ slightly 
+      // because the DB has decimal strings and the service expects MoneyMinor
+      const mappedEntries = entries.map(entry => ({
+        ...entry,
+        entryDate: entry.entryDate.toISOString(),
+        postedAt: entry.postedAt.toISOString(),
+        lines: entry.lines.map(line => ({
+          ...line,
+          debitMinor: Math.round(Number(line.debit) * 100),
+          creditMinor: Math.round(Number(line.credit) * 100),
+          description: line.description ?? undefined,
+          entityType: (line.entityType as any) ?? undefined,
+          entityId: line.entityId ?? undefined,
+        }))
+      }));
 
-      for (const line of lines) {
-        const debitMinor = Math.round(Number(line.debit) * 100);
-        const creditMinor = Math.round(Number(line.credit) * 100);
-        balances.set(line.accountId, (balances.get(line.accountId) ?? 0) + debitMinor - creditMinor);
-      }
+      const rows = calculateTrialBalance(accounts as any, mappedEntries as any)
+        .filter(row => row.debitMinor > 0 || row.creditMinor > 0);
 
       let debitTotal = 0;
       let creditTotal = 0;
-
-      const rows = accounts.map((account) => {
-        const rawBalance = balances.get(account.id) ?? 0;
-        const debitMinor = rawBalance > 0 ? rawBalance : 0;
-        const creditMinor = rawBalance < 0 ? Math.abs(rawBalance) : 0;
-
-        debitTotal += debitMinor;
-        creditTotal += creditMinor;
-
-        return {
-          account,
-          debitMinor,
-          creditMinor,
-          balanceMinor: rawBalance
-        };
-      }).filter(row => row.debitMinor > 0 || row.creditMinor > 0);
+      for (const row of rows) {
+        debitTotal += row.debitMinor;
+        creditTotal += row.creditMinor;
+      }
 
       return {
         rows,

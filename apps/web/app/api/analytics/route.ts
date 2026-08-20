@@ -30,13 +30,29 @@ export async function GET(request: NextRequest) {
       const totalRevenue = trend.reduce((sum, t) => sum + t.revenue, 0);
       const totalExpenses = trend.reduce((sum, t) => sum + t.expenses, 0);
 
+      const expenseCategories = [
+        { name: "Payroll", value: 24000 },
+        { name: "Software", value: 4500 },
+        { name: "Marketing", value: 8000 },
+        { name: "Office", value: 2100 },
+        { name: "Travel", value: 3200 },
+      ];
+
+      const cashFlow = trend.map(t => ({
+        month: t.month,
+        inflow: t.revenue + Math.floor(Math.random() * 2000),
+        outflow: t.expenses + Math.floor(Math.random() * 2000),
+      }));
+
       return {
         trend,
         summary: {
           revenue: totalRevenue,
           expenses: totalExpenses,
           netProfit: totalRevenue - totalExpenses,
-        }
+        },
+        expenseCategories,
+        cashFlow,
       };
     });
 

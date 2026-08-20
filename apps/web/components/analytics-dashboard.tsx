@@ -11,6 +11,12 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Legend,
 } from "recharts";
 
 interface TrendData {
@@ -26,7 +32,11 @@ interface AnalyticsPayload {
     expenses: number;
     netProfit: number;
   };
+  expenseCategories: { name: string; value: number }[];
+  cashFlow: { month: string; inflow: number; outflow: number }[];
 }
+
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export function AnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsPayload | null>(null);
@@ -91,54 +101,110 @@ export function AnalyticsDashboard() {
       </div>
 
       {/* Chart */}
-      <div className="rounded-[8px] border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-sm font-semibold text-ink-900 mb-6">6-Month Trend</h2>
-        <div className="h-[350px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data.trend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} dy={10} />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fontSize: 12, fill: "#64748b" }} 
-                tickFormatter={(val) => `$${val / 1000}k`}
-                dx={-10}
-              />
-              <Tooltip 
-                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                formatter={(value: number) => formatCurrency(value)}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#10b981" 
-                strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#colorRevenue)" 
-                name="Revenue"
-              />
-              <Area 
-                type="monotone" 
-                dataKey="expenses" 
-                stroke="#f43f5e" 
-                strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#colorExpenses)" 
-                name="Expenses"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-[8px] border border-slate-200 bg-white p-5 shadow-sm col-span-2">
+          <h2 className="text-sm font-semibold text-ink-900 mb-6">6-Month Trend</h2>
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data.trend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} dy={10} />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 12, fill: "#64748b" }} 
+                  tickFormatter={(val) => `$${val / 1000}k`}
+                  dx={-10}
+                />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  formatter={(value: number) => formatCurrency(value)}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  fillOpacity={1} 
+                  fill="url(#colorRevenue)" 
+                  name="Revenue"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="expenses" 
+                  stroke="#f43f5e" 
+                  strokeWidth={2}
+                  fillOpacity={1} 
+                  fill="url(#colorExpenses)" 
+                  name="Expenses"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="rounded-[8px] border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink-900 mb-6">Cash Flow Over Time</h2>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data.cashFlow} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} dy={10} />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 12, fill: "#64748b" }} 
+                  tickFormatter={(val) => `$${val / 1000}k`}
+                  dx={-10}
+                />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  formatter={(value: number) => formatCurrency(value)}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 20 }} />
+                <Line type="monotone" dataKey="inflow" stroke="#3b82f6" strokeWidth={2} name="Cash In" dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="outflow" stroke="#f59e0b" strokeWidth={2} name="Cash Out" dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="rounded-[8px] border border-slate-200 bg-white p-5 shadow-sm flex flex-col">
+          <h2 className="text-sm font-semibold text-ink-900 mb-6">Expenses by Category</h2>
+          <div className="h-[300px] w-full flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data.expenseCategories}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={120}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {data.expenseCategories.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  formatter={(value: number) => formatCurrency(value)}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 20 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>
