@@ -3,6 +3,7 @@ export interface ModuleDefinition {
   title: string;
   description: string;
   createLabel: string;
+  status?: "wip" | "coming_soon";
 }
 
 export const moduleDefinitions = {
@@ -16,7 +17,8 @@ export const moduleDefinitions = {
     moduleKey: "banking-rules",
     title: "Bank rules",
     description: "Rules used to categorize and tag bank feed activity.",
-    createLabel: "Add rule"
+    createLabel: "Add rule",
+    status: "coming_soon"
   },
   "banking-reconcile": {
     moduleKey: "banking-reconcile",
@@ -46,7 +48,8 @@ export const moduleDefinitions = {
     moduleKey: "sales-invoices",
     title: "Invoices",
     description: "Invoice drafts and posted invoice records.",
-    createLabel: "Create invoice"
+    createLabel: "Create invoice",
+    status: "wip"
   },
   "sales-estimates": {
     moduleKey: "sales-estimates",

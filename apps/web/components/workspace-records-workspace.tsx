@@ -87,7 +87,11 @@ export function WorkspaceRecordsWorkspace({ definition }: { definition: ModuleDe
       <header>
         <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-500">Live module</p>
+            <div className="flex items-center gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-500">Live module</p>
+              {definition.status === "wip" && <StatusPill tone="warning">Work in Progress</StatusPill>}
+              {definition.status === "coming_soon" && <StatusPill tone="info">Coming Soon</StatusPill>}
+            </div>
             <h1 className="mt-2 font-serif text-4xl font-semibold tracking-normal text-ink-900">{definition.title}</h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-500">{definition.description}</p>
           </div>
