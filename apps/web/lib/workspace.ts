@@ -71,15 +71,4 @@ export function isWorkspaceError(
   return result instanceof NextResponse;
 }
 
-// ─── Legacy shim ─────────────────────────────────────────────────────────────
-// Kept for gradual migration. New routes MUST use requireWorkspace().
-// TODO: remove after all call sites are migrated.
-const DEMO_ORG_ID = "org-ledgerline-demo";
-
-/** @deprecated Use `requireWorkspace(request)` instead. */
-export function getCurrentWorkspace() {
-  return {
-    orgId: process.env.LEDGERLINE_DEMO_ORG_ID ?? DEMO_ORG_ID,
-    userId: process.env.LEDGERLINE_DEMO_USER_ID,
-  };
-}
+// Legacy shims removed.

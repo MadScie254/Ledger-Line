@@ -1,7 +1,21 @@
 import { createPrismaClient } from "@ledgerline/db";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { GET, POST } from "../app/api/accounting/accounts/route";
 import { PATCH } from "../app/api/accounting/accounts/[accountId]/route";
+
+vi.mock("@/lib/workspace", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("@/lib/workspace")>();
+  return {
+    ...mod,
+    requireWorkspace: vi.fn().mockImplementation(async () => {
+      return { 
+        orgId: process.env.LEDGERLINE_DEMO_ORG_ID, 
+        userId: "test-user-id", 
+        email: "test@example.com" 
+      };
+    })
+  };
+});
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 const describeWithDatabase = testDatabaseUrl ? describe : describe.skip;
