@@ -7,12 +7,7 @@ export interface ModuleDefinition {
 }
 
 export const moduleDefinitions = {
-  "banking-transactions": {
-    moduleKey: "banking-transactions",
-    title: "Bank transactions",
-    description: "Imported and manually recorded banking transactions.",
-    createLabel: "Add transaction"
-  },
+
   "banking-rules": {
     moduleKey: "banking-rules",
     title: "Bank rules",
