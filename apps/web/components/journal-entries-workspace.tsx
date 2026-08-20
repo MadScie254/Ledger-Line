@@ -138,7 +138,7 @@ export function JournalEntriesWorkspace() {
     ) },
     { key: "total", header: "Total", align: "right", cell: (e) => {
       const total = e.lines.reduce((sum, l) => sum + (l.debitMinor || 0), 0);
-      return <span className="font-mono text-xs text-slate-500">{(total / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span>;
+      return <span className="font-mono text-xs text-slate-500">{(total / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
     } }
   ];
 

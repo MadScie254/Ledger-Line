@@ -1,6 +1,6 @@
-import { minorToDecimal, decimalToMinor } from "@ledgerline/ledger-service";
-import { Prisma } from "@ledgerline/db";
-import { NextRequest, NextResponse } from "next/server";
+import { decimalToMinor } from "@ledgerline/ledger-service";
+import { Prisma, PrismaClient } from "@ledgerline/db";
+import { NextResponse } from "next/server";
 import { withDatabase } from "@/lib/database";
 import { requireWorkspace, isWorkspaceError } from "@/lib/workspace";
 
@@ -17,14 +17,14 @@ export async function POST(request: Request) {
 
     const workspace = await requireWorkspace(request);
     if (isWorkspaceError(workspace)) return workspace;
-    const answer = await withDatabase((prisma) => answerQuestion(prisma, workspace.orgId, question));
+    const answer = await withDatabase((prisma) => answerQuestion(prisma as unknown as PrismaClient, workspace.orgId, workspace.baseCurrency, question));
     return NextResponse.json(answer);
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Query failed." }, { status: 400 });
   }
 }
 
-async function answerQuestion(prisma: Prisma.TransactionClient | PrismaClientLike, orgId: string, question: string) {
+async function answerQuestion(prisma: PrismaClient, orgId: string, currency: string, question: string) {
   const normalized = question.toLowerCase();
 
   if (normalized.includes("profit")) {
@@ -62,7 +62,7 @@ async function answerQuestion(prisma: Prisma.TransactionClient | PrismaClientLik
 
     const netProfitMinor = incomeMinor - cogsMinor - expenseMinor;
     return {
-      answer: `Net profit this month is KES ${(netProfitMinor / 100).toLocaleString()}.`,
+      answer: `Net profit this month is ${currency} ${(netProfitMinor / 100).toLocaleString()}.`,
       valueMinor: netProfitMinor,
       reportLink: "/reports/profit-and-loss"
     };
@@ -78,7 +78,7 @@ async function answerQuestion(prisma: Prisma.TransactionClient | PrismaClientLik
     const openTotalMinor = openTotal._sum.balanceDue ? decimalToMinor(openTotal._sum.balanceDue) : 0;
 
     return {
-      answer: `You have ${openCount} open invoices and ${paidCount} paid invoices. Open balance is KES ${(openTotalMinor / 100).toLocaleString()}.`,
+      answer: `You have ${openCount} open invoices and ${paidCount} paid invoices. Open balance is ${currency} ${(openTotalMinor / 100).toLocaleString()}.`,
       valueMinor: openTotalMinor,
       reportLink: "/reports/ar-aging"
     };
@@ -95,7 +95,7 @@ async function answerQuestion(prisma: Prisma.TransactionClient | PrismaClientLik
     }
 
     return {
-      answer: `Current cash across bank and till accounts is KES ${(balanceMinor / 100).toLocaleString()}.`,
+      answer: `Current cash across bank and till accounts is ${currency} ${(balanceMinor / 100).toLocaleString()}.`,
       valueMinor: balanceMinor,
       reportLink: "/reports/cash-flow"
     };
@@ -108,7 +108,6 @@ async function answerQuestion(prisma: Prisma.TransactionClient | PrismaClientLik
   };
 }
 
-
 function startOfMonth() {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -119,16 +118,4 @@ function endOfMonth() {
   return new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 }
 
-type PrismaClientLike = {
-  journalLine: {
-    findMany: (args: unknown) => Promise<Array<{ debit: Prisma.Decimal; credit: Prisma.Decimal; account: { type: string } }>>;
-  };
-  invoice: {
-    count: (args: unknown) => Promise<number>;
-    aggregate: (args: unknown) => Promise<{ _sum: { balanceDue: Prisma.Decimal | null } }>;
-  };
-  account: {
-    findMany: (args: unknown) => Promise<Array<{ id: string; code: string }>>;
-  };
-};
 
