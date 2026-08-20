@@ -10,6 +10,7 @@
     "build": "prisma validate --schema prisma/schema.prisma",
     "typecheck": "tsc --noEmit",
     "test": "echo \"@ledgerline/db migration tests are pending\"",
+    "db:check-drift": "prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --exit-code",
     "generate": "prisma generate --schema prisma/schema.prisma",
     "seed": "tsx prisma/seed.ts"
   },

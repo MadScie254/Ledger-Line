@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "BillPayment" ADD COLUMN "billId" TEXT;
+ALTER TABLE "BillPayment" ADD COLUMN "amount" DECIMAL(18,2) NOT NULL DEFAULT 0;
+ALTER TABLE "BillPayment" ALTER COLUMN "amount" DROP DEFAULT;
+
+-- AddForeignKey
+ALTER TABLE "BillPayment" ADD CONSTRAINT "BillPayment_billId_fkey" FOREIGN KEY ("billId") REFERENCES "Bill"("id") ON DELETE SET NULL ON UPDATE CASCADE;

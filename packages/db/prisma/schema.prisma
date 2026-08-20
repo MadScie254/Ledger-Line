@@ -258,6 +258,8 @@ model Account {
   billLines           BillLine[]
   paidExpenses        Expense[]     @relation("ExpensePaymentAccount")
   categorizedExpenses Expense[]     @relation("ExpenseCategoryAccount")
+  paymentsReceived    PaymentReceived[]
+  billPayments        BillPayment[]
 
   @@unique([orgId, code])
   @@index([orgId, type])
@@ -375,7 +377,7 @@ model Customer {
   creditLimit     Decimal?          @db.Decimal(18, 2)
   tags            String[]
   createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  updatedAt       DateTime          @default(now()) @updatedAt
   invoices        Invoice[]
   estimates       Estimate[]
   salesReceipts   SalesReceipt[]
@@ -436,7 +438,7 @@ model Invoice {
   footer              String?
   recurringTemplateId String?
   createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  updatedAt           DateTime          @default(now()) @updatedAt
   lines               InvoiceLine[]
   payments            PaymentReceived[]
   paymentAllocations  PaymentReceivedAllocation[]
@@ -531,10 +533,11 @@ model PaymentReceived {
   date             DateTime
   method           String
   depositAccountId String
+  depositAccount   Account      @relation(fields: [depositAccountId], references: [id])
   allocations      PaymentReceivedAllocation[]
   reference        String?
   createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  updatedAt        DateTime     @default(now()) @updatedAt
 
   @@index([orgId, date])
 }
@@ -575,7 +578,7 @@ model Vendor {
   category     String?
   currency     String       @default("KES")
   createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  updatedAt    DateTime     @default(now()) @updatedAt
   bills        Bill[]
   purchaseOrders PurchaseOrder[]
 
@@ -599,7 +602,7 @@ model Bill {
   currency    String        @default("KES")
   fxRate      Decimal       @default(1) @db.Decimal(18, 8)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime      @default(now()) @updatedAt
   lines       BillLine[]
   payments    BillPayment[]
   paymentAllocations BillPaymentAllocation[]
@@ -645,7 +648,7 @@ model Expense {
   customer          Customer?    @relation(fields: [customerId], references: [id])
   receiptUrl        String?
   createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  updatedAt         DateTime     @default(now()) @updatedAt
 
   @@index([orgId, date])
 }
@@ -669,6 +672,7 @@ model BillPayment {
   amount           Decimal  @db.Decimal(18, 2)
   date             DateTime
   paymentAccountId String
+  paymentAccount   Account  @relation(fields: [paymentAccountId], references: [id])
   method           String
   reference        String?
   allocations      BillPaymentAllocation[]

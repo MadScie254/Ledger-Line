@@ -1,0 +1,6 @@
+ALTER TABLE "Customer" ALTER COLUMN "emails" SET DEFAULT ARRAY[]::text[];
+ALTER TABLE "Customer" ALTER COLUMN "phones" SET DEFAULT ARRAY[]::text[];
+ALTER TABLE "Customer" ALTER COLUMN "tags" SET DEFAULT ARRAY[]::text[];
+ALTER TABLE "SavedReport" ALTER COLUMN "recipients" SET DEFAULT ARRAY[]::text[];
+ALTER TABLE "Vendor" ALTER COLUMN "emails" SET DEFAULT ARRAY[]::text[];
+ALTER TABLE "Vendor" ALTER COLUMN "phones" SET DEFAULT ARRAY[]::text[];
