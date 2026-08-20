@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { BankingReconcileWorkspace } from "@/components/banking-reconcile-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="banking-reconcile" />;
+  return <BankingReconcileWorkspace />;
 }

@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { PayrollRunWorkspace } from "@/components/payroll-run-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="payroll-run" />;
+  return <PayrollRunWorkspace />;
 }

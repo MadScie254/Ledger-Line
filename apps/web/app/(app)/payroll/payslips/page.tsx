@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { PayrollPayslipsWorkspace } from "@/components/payroll-payslips-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="payroll-payslips" />;
+  return <PayrollPayslipsWorkspace />;
 }

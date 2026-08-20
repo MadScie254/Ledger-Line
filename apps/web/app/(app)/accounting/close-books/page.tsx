@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { AccountingCloseBooksWorkspace } from "@/components/accounting-close-books-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="accounting-close-books" />;
+  return <AccountingCloseBooksWorkspace />;
 }

@@ -8,25 +8,7 @@ export interface ModuleDefinition {
 
 export const moduleDefinitions = {
 
-  "banking-rules": {
-    moduleKey: "banking-rules",
-    title: "Bank rules",
-    description: "Rules used to categorize and tag bank feed activity.",
-    createLabel: "Add rule",
-    status: "coming_soon"
-  },
-  "banking-reconcile": {
-    moduleKey: "banking-reconcile",
-    title: "Reconcile",
-    description: "Statement reconciliation sessions and notes.",
-    createLabel: "Start reconciliation"
-  },
-  "banking-connections": {
-    moduleKey: "banking-connections",
-    title: "Bank connections",
-    description: "Connected bank and mobile-money channels.",
-    createLabel: "Connect bank"
-  },
+
   "sales-overview": {
     moduleKey: "sales-overview",
     title: "Sales overview",
@@ -124,29 +106,11 @@ export const moduleDefinitions = {
     description: "Completed and open reconciliation events.",
     createLabel: "Add reconciliation"
   },
-  "accounting-close-books": {
-    moduleKey: "accounting-close-books",
-    title: "Close books",
-    description: "Close-book checkpoints and period lock notes.",
-    createLabel: "Add close note"
-  },
   "payroll-employees": {
     moduleKey: "payroll-employees",
     title: "Employees",
     description: "Payroll employee master records.",
     createLabel: "Create employee"
-  },
-  "payroll-run": {
-    moduleKey: "payroll-run",
-    title: "Run payroll",
-    description: "Payroll run batches by period.",
-    createLabel: "Start pay run"
-  },
-  "payroll-payslips": {
-    moduleKey: "payroll-payslips",
-    title: "Payslips",
-    description: "Generated payslip records.",
-    createLabel: "Create payslip"
   },
   "payroll-filings": {
     moduleKey: "payroll-filings",
