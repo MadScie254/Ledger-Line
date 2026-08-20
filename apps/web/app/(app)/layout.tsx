@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { withDatabase } from "@/lib/database";
 
 /**
  * Auth guard for all protected app routes.
@@ -27,5 +28,19 @@ export default async function ProductLayout({
     redirect("/onboarding");
   }
 
-  return <AppShell>{children}</AppShell>;
+  // Fetch org name for the sidebar header
+  let orgName = "My Organisation";
+  try {
+    orgName = await withDatabase(async (prisma) => {
+      const org = await prisma.organization.findUnique({
+        where: { id: orgId },
+        select: { name: true },
+      });
+      return org?.name ?? "My Organisation";
+    });
+  } catch {
+    // non-fatal — use default
+  }
+
+  return <AppShell orgName={orgName}>{children}</AppShell>;
 }

@@ -1,84 +1,140 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import {
   Bell,
   Building2,
   ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
   Command,
   Menu,
   Plus,
   Search,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  X,
 } from "lucide-react";
 import { Button, cn } from "@ledgerline/ui";
 import { navigation, quickActions } from "@/lib/navigation";
 
-export function AppShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+const COLLAPSED_KEY = "ll_sidebar_collapsed";
+
+// ─── Sidebar Nav ────────────────────────────────────────────────────────────
+
+function SidebarNav({
+  collapsed,
+  pathname,
+}: {
+  collapsed: boolean;
+  pathname: string;
+}) {
+  return (
+    <nav aria-label="Primary" className={cn("flex-1 space-y-1 py-4", collapsed ? "px-2" : "px-3")}>
+      {navigation.map((item) => {
+        const Icon = item.icon;
+        const isActive =
+          pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+
+        return (
+          <div key={item.href}>
+            <Link
+              href={item.href}
+              title={collapsed ? item.title : undefined}
+              className={cn(
+                "flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium text-white/72 transition hover:bg-white/[0.08] hover:text-white focus-ring",
+                isActive && "bg-white/10 text-white shadow-[inset_3px_0_0_var(--brass-500)]",
+                collapsed && "justify-center px-2"
+              )}
+            >
+              {Icon ? <Icon className="h-4 w-4 shrink-0" aria-hidden="true" /> : <span className="h-4 w-4 shrink-0" />}
+              {!collapsed && <span className="truncate">{item.title}</span>}
+            </Link>
+
+            {!collapsed && isActive && item.children ? (
+              <div className="ml-7 mt-1 space-y-1 border-l border-white/10 pl-2">
+                {item.children.map((child) => {
+                  const childActive = pathname === child.href;
+                  return (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className={cn(
+                        "block rounded-[5px] px-3 py-1.5 text-xs font-medium text-white/50 transition hover:bg-white/[0.08] hover:text-white focus-ring",
+                        childActive && "bg-brass-500/[0.14] text-brass-400"
+                      )}
+                    >
+                      {child.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
+
+// ─── Mobile Drawer ───────────────────────────────────────────────────────────
+
+function MobileDrawer({
+  open,
+  onClose,
+  pathname,
+  orgName,
+}: {
+  open: boolean;
+  onClose: () => void;
+  pathname: string;
+  orgName: string;
+}) {
+  // Close on pathname change
+  useEffect(() => { onClose(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[288px_1fr]">
-      <aside className="hidden border-r border-white/10 bg-ink-900 text-white lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto">
-        <div className="border-b border-white/10 p-4">
-          <Link href="/" className="flex items-center gap-3 focus-ring rounded-[8px]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-brass-500 text-ink-900">
+    <>
+      {/* Backdrop */}
+      <div
+        className={cn(
+          "fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Sheet */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-white/10 bg-ink-900 text-white shadow-2xl transition-transform duration-300 lg:hidden",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+        aria-label="Mobile navigation"
+      >
+        <div className="flex items-center justify-between border-b border-white/10 p-4">
+          <Link href="/" onClick={onClose} className="flex items-center gap-3 focus-ring rounded-[8px]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-brass-500 text-ink-900 shrink-0">
               <Building2 className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
               <p className="font-serif text-xl font-semibold leading-none">Ledgerline</p>
-              <p className="mt-1 text-xs text-white/56">Akili Traders Ltd.</p>
+              <p className="mt-1 text-xs text-white/56 truncate max-w-[140px]">{orgName}</p>
             </div>
           </Link>
-          <button className="mt-4 flex w-full items-center justify-between rounded-[6px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/82 focus-ring">
-            <span>Kenya entity</span>
-            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-[6px] text-white/60 hover:bg-white/10 hover:text-white focus-ring"
+            aria-label="Close navigation"
+          >
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <nav aria-label="Primary" className="flex-1 space-y-1 px-3 py-4">
-          {navigation.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-
-            return (
-              <div key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium text-white/72 transition hover:bg-white/[0.08] hover:text-white focus-ring",
-                    isActive && "bg-white/10 text-white shadow-[inset_3px_0_0_var(--brass-500)]"
-                  )}
-                >
-                  {Icon ? <Icon className="h-4 w-4" aria-hidden="true" /> : <span className="h-4 w-4" />}
-                  <span>{item.title}</span>
-                </Link>
-                {isActive && item.children ? (
-                  <div className="ml-7 mt-1 space-y-1 border-l border-white/10 pl-2">
-                    {item.children.map((child) => {
-                      const childActive = pathname === child.href;
-                      return (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className={cn(
-                            "block rounded-[5px] px-3 py-1.5 text-xs font-medium text-white/50 transition hover:bg-white/[0.08] hover:text-white focus-ring",
-                            childActive && "bg-brass-500/[0.14] text-brass-400"
-                          )}
-                        >
-                          {child.title}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
-        </nav>
+        <SidebarNav collapsed={false} pathname={pathname} />
 
         <div className="border-t border-white/10 p-4">
           <div className="rounded-[8px] border border-white/10 bg-white/5 p-3">
@@ -86,48 +142,249 @@ export function AppShell({ children }: { children: ReactNode }) {
               <ShieldCheck className="h-4 w-4 text-brass-400" aria-hidden="true" />
               Trial balance clean
             </div>
-            <p className="mt-2 text-xs leading-5 text-white/56">All posted journals pass exact debit-credit validation.</p>
+            <p className="mt-2 text-xs leading-5 text-white/56">
+              All posted journals pass exact debit-credit validation.
+            </p>
           </div>
         </div>
       </aside>
+    </>
+  );
+}
 
-      <div className="min-w-0">
+// ─── Global Search ───────────────────────────────────────────────────────────
+
+function GlobalSearch() {
+  const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  // ⌘K / Ctrl+K
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  const filtered = query.length > 0
+    ? navigation
+        .flatMap((item) => [item, ...(item.children ?? [])])
+        .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 6)
+    : [];
+
+  function handleSelect(href: string) {
+    router.push(href);
+    setQuery("");
+    inputRef.current?.blur();
+  }
+
+  return (
+    <div className="relative min-w-0 flex-1">
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
+      <input
+        ref={inputRef}
+        id="global-search"
+        aria-label="Global search"
+        autoComplete="off"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setTimeout(() => setFocused(false), 150)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") { setQuery(""); inputRef.current?.blur(); }
+          if (e.key === "Enter" && filtered.length > 0) handleSelect(filtered[0]!.href);
+        }}
+        placeholder="Navigate. Find transactions, contacts, reports..."
+        className="h-10 w-full rounded-[6px] border border-slate-200 bg-white pl-10 pr-10 text-sm text-ink-900 shadow-sm outline-none transition focus:border-focus-blue-500 focus:ring-2 focus:ring-focus-blue-500/20"
+      />
+      <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden items-center gap-1 rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 sm:flex">
+        <Command className="h-3 w-3" />K
+      </kbd>
+
+      {focused && filtered.length > 0 && (
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-ledger-deep">
+          {filtered.map((item) => (
+            <button
+              key={item.href}
+              className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-ink-900 hover:bg-paper-100 focus-ring"
+              onMouseDown={() => handleSelect(item.href)}
+            >
+              {"icon" in item && item.icon ? (
+                <item.icon className="h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
+              ) : (
+                <span className="h-4 w-4" />
+              )}
+              <span className="truncate">{item.title}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── AppShell ────────────────────────────────────────────────────────────────
+
+export function AppShell({
+  children,
+  orgName = "My Organisation",
+}: {
+  children: ReactNode;
+  orgName?: string;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(COLLAPSED_KEY) === "true";
+  });
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(COLLAPSED_KEY, String(next));
+      return next;
+    });
+  }, []);
+
+  return (
+    <div className="min-h-screen lg:flex">
+      {/* ── Desktop Sidebar ──────────────────────────────────────────────── */}
+      <aside
+        className={cn(
+          "hidden border-r border-white/10 bg-ink-900 text-white lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto lg:sticky lg:top-0 transition-all duration-300",
+          collapsed ? "lg:w-[68px]" : "lg:w-[288px]"
+        )}
+      >
+        {/* Logo / Org */}
+        <div className={cn("border-b border-white/10", collapsed ? "p-3" : "p-4")}>
+          {collapsed ? (
+            <Link href="/dashboard" title="LedgerLine" className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-brass-500 text-ink-900 focus-ring mx-auto">
+              <Building2 className="h-5 w-5" aria-hidden="true" />
+            </Link>
+          ) : (
+            <>
+              <Link href="/dashboard" className="flex items-center gap-3 focus-ring rounded-[8px]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-brass-500 text-ink-900 shrink-0">
+                  <Building2 className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-serif text-xl font-semibold leading-none">Ledgerline</p>
+                  <p className="mt-1 text-xs text-white/56 truncate">{orgName}</p>
+                </div>
+              </Link>
+              <button className="mt-4 flex w-full items-center justify-between rounded-[6px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/82 focus-ring">
+                <span className="truncate">Kenya entity</span>
+                <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
+              </button>
+            </>
+          )}
+        </div>
+
+        <SidebarNav collapsed={collapsed} pathname={pathname} />
+
+        {/* Bottom panel */}
+        {!collapsed && (
+          <div className="border-t border-white/10 p-4">
+            <div className="rounded-[8px] border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <ShieldCheck className="h-4 w-4 text-brass-400" aria-hidden="true" />
+                Trial balance clean
+              </div>
+              <p className="mt-2 text-xs leading-5 text-white/56">
+                All posted journals pass exact debit-credit validation.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Collapse toggle */}
+        <div className={cn("border-t border-white/10 p-2", collapsed && "flex justify-center")}>
+          <button
+            onClick={toggleCollapsed}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="flex h-8 w-full items-center justify-center gap-2 rounded-[6px] px-2 text-xs text-white/50 hover:bg-white/10 hover:text-white transition focus-ring"
+          >
+            {collapsed ? (
+              <ChevronsRight className="h-4 w-4" />
+            ) : (
+              <>
+                <ChevronsLeft className="h-4 w-4" />
+                <span>Collapse</span>
+              </>
+            )}
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Mobile Drawer ─────────────────────────────────────────────────── */}
+      <MobileDrawer
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        pathname={pathname}
+        orgName={orgName}
+      />
+
+      {/* ── Main content ──────────────────────────────────────────────────── */}
+      <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-paper-50/94 px-4 py-3 backdrop-blur md:px-6">
           <div className="flex items-center gap-3">
-            <button className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-slate-200 bg-white text-ink-900 lg:hidden">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-slate-200 bg-white text-ink-900 lg:hidden shrink-0"
+              aria-label="Open navigation"
+            >
               <Menu className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Open navigation</span>
             </button>
-            <div className="relative min-w-0 flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
-              <input
-                aria-label="Global search"
-                placeholder="Navigate. Find transactions, contacts, reports..."
-                className="h-10 w-full rounded-[6px] border border-slate-200 bg-white pl-10 pr-10 text-sm text-ink-900 shadow-sm outline-none transition focus:border-focus-blue-500 focus:ring-2 focus:ring-focus-blue-500/20"
-              />
-              <Command className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300" aria-hidden="true" />
-            </div>
-            <div className="hidden items-center gap-2 md:flex">
+
+            {/* Global search */}
+            <GlobalSearch />
+
+            {/* Actions */}
+            <div className="hidden items-center gap-2 md:flex shrink-0">
               <Button variant="accent" size="sm">
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 New
               </Button>
-              <Button variant="secondary" size="icon" aria-label="AI Business Feed">
+              <Button
+                variant="secondary"
+                size="icon"
+                aria-label="AI Business Feed"
+                onClick={() => router.push("/business-feed")}
+              >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
               </Button>
-              <Button variant="secondary" size="icon" aria-label="Notifications">
+              <Button
+                variant="secondary"
+                size="icon"
+                aria-label="Notifications"
+                onClick={() => router.push("/notifications")}
+              >
                 <Bell className="h-4 w-4" aria-hidden="true" />
               </Button>
             </div>
           </div>
 
+          {/* Mobile quick-nav pills */}
           <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden">
             {navigation.slice(0, 7).map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "whitespace-nowrap rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700",
+                  "whitespace-nowrap rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition",
                   (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))) &&
                     "border-brass-500 bg-brass-500/10 text-ink-900"
                 )}
@@ -142,6 +399,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto max-w-[1500px]">{children}</div>
         </main>
 
+        {/* Desktop quick-action dock */}
         <div className="fixed bottom-4 left-1/2 z-30 hidden -translate-x-1/2 gap-2 rounded-[8px] border border-slate-200 bg-white p-2 shadow-ledger-deep xl:flex">
           {quickActions.slice(0, 5).map((action) => {
             const Icon = action.icon;
