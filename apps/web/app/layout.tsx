@@ -7,12 +7,15 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "sonner";
+import { ReactQueryProvider } from "@/components/react-query-provider";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <ReactQueryProvider>
+          {children}
+        </ReactQueryProvider>
         <Toaster position="bottom-right" />
       </body>
     </html>
