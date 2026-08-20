@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
+import { LedgerlineLogo } from "@ledgerline/ui";
 
 function createClient() {
   return createBrowserClient(
@@ -41,12 +42,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-ink-900 via-ink-800 to-slate-900 p-4 font-sans text-slate-100">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 transition-all duration-300">
         
-        <div className="flex justify-center items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-gradient-to-tr from-brass-500 to-brass-400 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg ring-2 ring-brass-400/50">
-            LL
-          </div>
-          <span className="text-2xl font-semibold tracking-tight text-white">LedgerLine</span>
-        </div>
+        <LedgerlineLogo className="mb-8" size="lg" />
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Reset password</h1>

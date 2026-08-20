@@ -6,5 +6,6 @@ export { DoubleRule } from "./primitives/double-rule";
 export { EmptyState } from "./primitives/empty-state";
 export { Field, Input, Select } from "./primitives/field";
 export { KpiCard } from "./primitives/kpi-card";
+export { LedgerlineLogo } from "./primitives/ledgerline-logo";
 export { StatusPill } from "./primitives/status-pill";
 export { cn } from "./utils/cn";
