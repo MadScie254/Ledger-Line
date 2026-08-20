@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
-import { LedgerlineLogo } from "@ledgerline/ui";
+import { AlertCircle, CheckCircle2, LoaderCircle } from "lucide-react";
+import { Button, Field, Input } from "@ledgerline/ui";
 
 function createClient() {
   return createBrowserClient(
@@ -18,6 +19,8 @@ export default function ForgotPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  const errorId = "forgot-error";
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -26,7 +29,7 @@ export default function ForgotPasswordPage() {
     startTransition(async () => {
       const supabase = createClient();
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback?next=/dashboard`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
       });
 
       if (error) {
@@ -38,71 +41,90 @@ export default function ForgotPasswordPage() {
     });
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-ink-900 via-ink-800 to-slate-900 p-4 font-sans text-slate-100">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 transition-all duration-300">
-        
-        <LedgerlineLogo className="mb-8" size="lg" />
-
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Reset password</h1>
-          <p className="text-slate-300 text-sm">Enter your email to receive a reset link</p>
-        </div>
-
-        {success ? (
-          <div className="space-y-6">
-            <div className="p-4 bg-brass-400/20 border border-brass-400/50 text-brass-200 text-sm rounded-xl flex flex-col items-center gap-3 text-center">
-              <span className="text-3xl">✉️</span>
-              <p>Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.</p>
-            </div>
-            
-            <Link 
-              href="/login" 
-              className="block text-center w-full py-3 px-4 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-brass-400 transition-all duration-200"
-            >
-              Return to login
-            </Link>
+  if (success) {
+    return (
+      <div className="w-full max-w-sm space-y-6 text-center">
+        <div className="flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-ledger-green-700/20 bg-ledger-green-700/10">
+            <CheckCircle2 className="h-8 w-8 text-ledger-green-700" aria-hidden="true" />
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-sm font-medium text-slate-200">Email address</label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                disabled={isPending}
-                className="w-full px-4 py-3 bg-ink-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent transition-all duration-200"
-              />
-            </div>
-
-            {error && (
-              <div className="p-3 bg-rust-700/20 border border-rust-700/50 text-red-200 text-sm rounded-lg flex items-start gap-2" role="alert">
-                <span className="text-rust-400 mt-0.5">⚠️</span>
-                {error}
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              disabled={isPending}
-              className="w-full py-3 px-4 bg-gradient-to-r from-brass-500 to-brass-400 hover:from-brass-400 hover:to-brass-300 text-ink-900 font-semibold rounded-xl shadow-lg hover:shadow-brass-500/25 focus:outline-none focus:ring-2 focus:ring-brass-400 focus:ring-offset-2 focus:ring-offset-ink-900 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed transform active:scale-[0.98]"
-            >
-              {isPending ? "Sending link…" : "Send reset link"}
-            </button>
-            
-            <div className="text-center mt-6">
-              <Link href="/login" className="text-sm font-medium text-brass-400 hover:text-brass-300 transition-colors">
-                Back to login
-              </Link>
-            </div>
-          </form>
-        )}
+        </div>
+        <div className="space-y-2">
+          <h2 className="font-serif text-2xl font-bold text-ink-900">Check your email</h2>
+          <p className="text-sm text-slate-500">
+            We&apos;ve sent a password reset link to <strong className="font-semibold text-ink-900">{email}</strong>.
+            If it doesn&apos;t appear within a few minutes, check your spam folder.
+          </p>
+        </div>
+        <Link
+          href="/login"
+          className="inline-flex w-full items-center justify-center rounded-[6px] border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-ink-900 shadow-sm transition hover:bg-paper-50"
+        >
+          Return to sign in
+        </Link>
       </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-sm space-y-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-500">Account recovery</p>
+        <h2 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink-900">Reset your password</h2>
+        <p className="mt-2 text-sm text-slate-500">Enter your email to receive a reset link.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate aria-describedby={error ? errorId : undefined}>
+        <Field label="Email address">
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@company.co.ke"
+            disabled={isPending}
+            aria-invalid={!!error}
+            aria-describedby={error ? errorId : undefined}
+            className="w-full h-10 text-base"
+          />
+        </Field>
+
+        {error && (
+          <div
+            id={errorId}
+            role="alert"
+            className="flex items-start gap-2.5 rounded-[6px] border border-rust-700/30 bg-rust-700/8 px-3 py-2.5 text-sm text-rust-700"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isPending}
+          className="w-full h-10 text-base"
+        >
+          {isPending ? (
+            <>
+              <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
+              Sending link…
+            </>
+          ) : (
+            "Send reset link"
+          )}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-slate-500">
+        Remember your password?{" "}
+        <Link href="/login" className="font-semibold text-brass-500 hover:text-brass-600 transition-colors">
+          Back to sign in
+        </Link>
+      </p>
     </div>
   );
 }

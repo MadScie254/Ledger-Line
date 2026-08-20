@@ -4,12 +4,63 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
-import { LedgerlineLogo } from "@ledgerline/ui";
+import { AlertCircle, LoaderCircle } from "lucide-react";
+import { Button, Field, Input } from "@ledgerline/ui";
 
 function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  );
+}
+
+/** 4-segment password strength bar */
+function PasswordStrengthBar({ password }: { password: string }) {
+  function getStrength(p: string): number {
+    if (p.length === 0) return 0;
+    let score = 0;
+    if (p.length >= 8) score++;
+    if (p.length >= 12) score++;
+    if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
+    if (/[0-9]/.test(p)) score++;
+    if (/[^A-Za-z0-9]/.test(p)) score++;
+    return Math.min(4, score);
+  }
+
+  const strength = getStrength(password);
+  const labels = ["", "Weak", "Fair", "Good", "Strong"];
+  const segmentColors = [
+    "", // 0 — unused
+    "bg-rust-700", // 1 — weak
+    "bg-rust-700", // 2 — fair (still orange-red)
+    "bg-brass-400", // 3 — good
+    "bg-ledger-green-700", // 4 — strong
+  ];
+
+  if (password.length === 0) return null;
+
+  return (
+    <div className="mt-2 space-y-1.5">
+      <div className="flex gap-1">
+        {[1, 2, 3, 4].map((level) => (
+          <div
+            key={level}
+            className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+              level <= strength ? segmentColors[strength] : "bg-slate-200"
+            }`}
+          />
+        ))}
+      </div>
+      {strength > 0 && (
+        <p
+          className={`text-xs font-medium ${
+            strength <= 2 ? "text-rust-700" : strength === 3 ? "text-brass-500" : "text-ledger-green-700"
+          }`}
+        >
+          {labels[strength]}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -20,6 +71,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const errorId = "signup-error";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,50 +104,54 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-ink-900 via-ink-800 to-slate-900 p-4 font-sans text-slate-100">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 transition-all duration-300">
-        
-        <LedgerlineLogo className="mb-8" size="lg" />
+    <div className="w-full max-w-sm space-y-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-500">Get started</p>
+        <h2 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink-900">
+          Create your account
+        </h2>
+        <p className="mt-2 text-sm text-slate-500">14-day free trial · No credit card required</p>
+      </div>
 
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Create your account</h1>
-          <p className="text-slate-300 text-sm">Start your 14-day free trial — no credit card required</p>
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5"
+        noValidate
+        aria-describedby={error ? errorId : undefined}
+      >
+        <Field label="Full name">
+          <Input
+            id="name"
+            type="text"
+            autoComplete="name"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Jane Njoroge"
+            disabled={isPending}
+            className="w-full h-10 text-base"
+          />
+        </Field>
 
-        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-          <div className="space-y-1.5">
-            <label htmlFor="name" className="block text-sm font-medium text-slate-200">Full name</label>
-            <input
-              id="name"
-              type="text"
-              autoComplete="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Jane Njoroge"
-              disabled={isPending}
-              className="w-full px-4 py-3 bg-ink-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent transition-all duration-200"
-            />
-          </div>
+        <Field label="Work email">
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="jane@company.co.ke"
+            disabled={isPending}
+            aria-invalid={!!error}
+            aria-describedby={error ? errorId : undefined}
+            className="w-full h-10 text-base"
+          />
+        </Field>
 
-          <div className="space-y-1.5">
-            <label htmlFor="email" className="block text-sm font-medium text-slate-200">Work email</label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="jane@company.co.ke"
-              disabled={isPending}
-              className="w-full px-4 py-3 bg-ink-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent transition-all duration-200"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label htmlFor="password" className="block text-sm font-medium text-slate-200">Password</label>
-            <input
+        <div>
+          <Field label="Password">
+            <Input
               id="password"
               type="password"
               autoComplete="new-password"
@@ -104,39 +161,55 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Min. 8 characters"
               disabled={isPending}
-              className="w-full px-4 py-3 bg-ink-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent transition-all duration-200"
+              aria-invalid={!!error}
+              aria-describedby={error ? errorId : undefined}
+              className="w-full h-10 text-base"
             />
-          </div>
+          </Field>
+          <PasswordStrengthBar password={password} />
+        </div>
 
-          {error && (
-            <div className="p-3 bg-rust-700/20 border border-rust-700/50 text-red-200 text-sm rounded-lg flex items-start gap-2" role="alert">
-              <span className="text-rust-400 mt-0.5">⚠️</span>
-              {error}
-            </div>
-          )}
-
-          <button 
-            type="submit" 
-            disabled={isPending}
-            className="w-full py-3 px-4 bg-gradient-to-r from-brass-500 to-brass-400 hover:from-brass-400 hover:to-brass-300 text-ink-900 font-semibold rounded-xl shadow-lg hover:shadow-brass-500/25 focus:outline-none focus:ring-2 focus:ring-brass-400 focus:ring-offset-2 focus:ring-offset-ink-900 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed transform active:scale-[0.98]"
+        {error && (
+          <div
+            id={errorId}
+            role="alert"
+            className="flex items-start gap-2.5 rounded-[6px] border border-rust-700/30 bg-rust-700/8 px-3 py-2.5 text-sm text-rust-700"
           >
-            {isPending ? "Creating account…" : "Create account"}
-          </button>
-        </form>
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
+          </div>
+        )}
 
-        <p className="mt-8 text-center text-sm text-slate-300">
-          Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-brass-400 hover:text-brass-300 transition-colors">
-            Sign in
-          </Link>
-        </p>
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isPending}
+          className="w-full h-10 text-base"
+        >
+          {isPending ? (
+            <>
+              <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
+              Creating account…
+            </>
+          ) : (
+            "Create account"
+          )}
+        </Button>
+      </form>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
-          By creating an account you agree to our{" "}
-          <Link href="/terms" className="underline hover:text-slate-300 transition-colors">Terms of Service</Link> and{" "}
-          <Link href="/privacy" className="underline hover:text-slate-300 transition-colors">Privacy Policy</Link>.
-        </p>
-      </div>
+      <p className="text-center text-sm text-slate-500">
+        Already have an account?{" "}
+        <Link href="/login" className="font-semibold text-brass-500 hover:text-brass-600 transition-colors">
+          Sign in
+        </Link>
+      </p>
+
+      <p className="text-center text-xs text-slate-400">
+        By creating an account you agree to our{" "}
+        <Link href="/terms" className="underline hover:text-slate-500 transition-colors">Terms of Service</Link>
+        {" "}and{" "}
+        <Link href="/privacy" className="underline hover:text-slate-500 transition-colors">Privacy Policy</Link>.
+      </p>
     </div>
   );
 }
