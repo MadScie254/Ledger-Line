@@ -14,8 +14,8 @@ function createClient() {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("danielwanjalamachimbo@gmail.com");
-  const [password, setPassword] = useState("4805640@Kmt");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
