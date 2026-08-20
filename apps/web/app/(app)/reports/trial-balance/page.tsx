@@ -1,5 +1,5 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { TrialBalanceWorkspace } from "@/components/trial-balance-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="reports-trial-balance" />;
+  return <TrialBalanceWorkspace />;
 }

@@ -238,24 +238,6 @@ export const moduleDefinitions = {
     description: "Saved P&L report variants.",
     createLabel: "Create view"
   },
-  "reports-balance-sheet": {
-    moduleKey: "reports-balance-sheet",
-    title: "Balance sheet",
-    description: "Saved balance sheet report variants.",
-    createLabel: "Create view"
-  },
-  "reports-cash-flow": {
-    moduleKey: "reports-cash-flow",
-    title: "Cash flow",
-    description: "Saved cash flow report variants.",
-    createLabel: "Create view"
-  },
-  "reports-trial-balance": {
-    moduleKey: "reports-trial-balance",
-    title: "Trial balance",
-    description: "Saved trial balance report variants.",
-    createLabel: "Create view"
-  },
   "reports-ar-aging": {
     moduleKey: "reports-ar-aging",
     title: "A/R aging",
