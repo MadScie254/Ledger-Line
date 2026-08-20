@@ -28,3 +28,9 @@ pnpm-debug.log*
 Thumbs.db
 .idea
 .vscode
+
+# Debug artifacts
+*.log
+drift.txt
+pulled.prisma
+/scratch/

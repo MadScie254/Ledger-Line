@@ -21,6 +21,61 @@ import { Button, cn } from "@ledgerline/ui";
 import { navigation, quickActions } from "@/lib/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { OrgSwitcher } from "./org-switcher";
+import { FileText, FileDown, Receipt, Users, Building } from "lucide-react";
+
+function NewButtonDropdown() {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const items = [
+    { label: "Invoice", href: "/sales/invoices", icon: FileText },
+    { label: "Bill", href: "/expenses/bills", icon: FileDown },
+    { label: "Expense", href: "/expenses/expenses", icon: Receipt },
+    { label: "Customer", href: "/sales/customers", icon: Users },
+    { label: "Vendor", href: "/expenses/vendors", icon: Building },
+  ];
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <Button variant="accent" size="sm" onClick={() => setIsOpen(!isOpen)}>
+        <Plus className="h-4 w-4" aria-hidden="true" />
+        New
+      </Button>
+
+      {isOpen && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-[8px] border border-slate-200 bg-white p-1 shadow-ledger-deep animate-in fade-in zoom-in-95">
+          {items.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.href}
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push(item.href);
+                }}
+                className="flex w-full items-center gap-3 rounded-[6px] px-3 py-2 text-sm text-ink-900 transition hover:bg-paper-100"
+              >
+                <Icon className="h-4 w-4 text-slate-500" />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const COLLAPSED_KEY = "ll_sidebar_collapsed";
 const OPEN_SECTION_KEY = "ll_sidebar_open_section";
@@ -415,10 +470,7 @@ export function AppShell({
 
             {/* Actions */}
             <div className="hidden items-center gap-2 md:flex shrink-0">
-              <Button variant="accent" size="sm" onClick={() => router.push('/sales/invoices')}>
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                New
-              </Button>
+              <NewButtonDropdown />
               <Button
                 variant="secondary"
                 size="icon"
