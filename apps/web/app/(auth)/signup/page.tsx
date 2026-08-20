@@ -18,7 +18,6 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -46,29 +45,8 @@ export default function SignupPage() {
         return;
       }
 
-      setSuccess(true);
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     });
-  }
-
-  if (success) {
-    return (
-      <div className="auth-page">
-        <div className="auth-card">
-          <div className="auth-logo">
-            <span className="auth-logo-mark">LL</span>
-            <span className="auth-logo-text">LedgerLine</span>
-          </div>
-          <h1 className="auth-heading">Check your inbox</h1>
-          <p className="auth-subheading">
-            We sent a confirmation link to <strong>{email}</strong>. Click it to
-            activate your account and continue to onboarding.
-          </p>
-          <Link href="/login" className="auth-btn-secondary">
-            Back to sign in
-          </Link>
-        </div>
-      </div>
-    );
   }
 
   return (

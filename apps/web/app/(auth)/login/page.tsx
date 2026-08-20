@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 
 function createClient() {
@@ -14,9 +14,12 @@ function createClient() {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  // Initialize error state from URL param if present
+  const [error, setError] = useState<string | null>(searchParams.get("error"));
   const [isPending, startTransition] = useTransition();
 
   async function handleSubmit(e: React.FormEvent) {
