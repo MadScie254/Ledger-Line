@@ -20,6 +20,7 @@ import {
 import { Button, cn } from "@ledgerline/ui";
 import { navigation, quickActions } from "@/lib/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { OrgSwitcher } from "./org-switcher";
 
 const COLLAPSED_KEY = "ll_sidebar_collapsed";
 const OPEN_SECTION_KEY = "ll_sidebar_open_section";
@@ -344,10 +345,7 @@ export function AppShell({
                   <p className="mt-1 text-xs text-white/56 truncate">{orgName}</p>
                 </div>
               </Link>
-              <button onClick={() => router.push('/settings/company')} className="mt-4 flex w-full items-center justify-between rounded-[6px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/82 hover:bg-white/10 transition focus-ring">
-                <span className="truncate">{orgName}</span>
-                <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
-              </button>
+              <OrgSwitcher currentOrgId={orgData?.id} currentOrgName={orgName} />
             </>
           )}
         </div>
