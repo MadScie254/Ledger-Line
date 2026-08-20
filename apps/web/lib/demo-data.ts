@@ -13,20 +13,20 @@ export const organization: Organization = {
 };
 
 export const accounts: Account[] = [
-  account("bank-main", "1000", "Equity Bank operating", "asset", "Bank"),
-  account("mpesa", "1010", "M-Pesa till", "asset", "Mobile money"),
-  account("receivable", "1200", "Accounts receivable", "asset", "Current asset"),
-  account("inventory", "1400", "Inventory", "asset", "Stock"),
-  account("payable", "2000", "Accounts payable", "liability", "Current liability"),
-  account("vat-payable", "2150", "VAT payable", "liability", "Tax"),
-  account("retained", "3000", "Retained earnings", "equity", "Equity"),
-  account("sales", "4000", "Product sales", "income", "Operating income"),
-  account("services", "4100", "Service revenue", "income", "Operating income"),
-  account("cogs", "5000", "Cost of goods sold", "cogs", "Direct cost"),
-  account("payroll", "6100", "Payroll expense", "expense", "People"),
-  account("rent", "6200", "Rent expense", "expense", "Facilities"),
-  account("fuel", "6300", "Fuel and logistics", "expense", "Logistics"),
-  account("bank-fees", "6400", "Bank and M-Pesa fees", "expense", "Fees")
+  account("bank-main", "1000", "Equity Bank operating", "ASSET", "Bank"),
+  account("mpesa", "1010", "M-Pesa till", "ASSET", "Mobile money"),
+  account("receivable", "1200", "Accounts receivable", "ASSET", "Current asset"),
+  account("inventory", "1400", "Inventory", "ASSET", "Stock"),
+  account("payable", "2000", "Accounts payable", "LIABILITY", "Current liability"),
+  account("vat-payable", "2150", "VAT payable", "LIABILITY", "Tax"),
+  account("retained", "3000", "Retained earnings", "EQUITY", "Equity"),
+  account("sales", "4000", "Product sales", "INCOME", "Operating income"),
+  account("services", "4100", "Service revenue", "INCOME", "Operating income"),
+  account("cogs", "5000", "Cost of goods sold", "COGS", "Direct cost"),
+  account("payroll", "6100", "Payroll expense", "EXPENSE", "People"),
+  account("rent", "6200", "Rent expense", "EXPENSE", "Facilities"),
+  account("fuel", "6300", "Fuel and logistics", "EXPENSE", "Logistics"),
+  account("bank-fees", "6400", "Bank and M-Pesa fees", "EXPENSE", "Fees")
 ];
 
 export const journalEntries = [

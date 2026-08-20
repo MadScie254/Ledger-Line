@@ -1,43 +1,76 @@
 import Link from "next/link";
 
+import { 
+  Scale, 
+  ReceiptText, 
+  Landmark, 
+  ChartNoAxesCombined, 
+  ShieldCheck, 
+  Globe, 
+  ChevronDown,
+  Building2,
+  CheckCircle2,
+  ArrowRight
+} from "lucide-react";
+import { useState } from "react";
+
 // ─── Static feature data ───────────────────────────────────────────────────
 const features = [
   {
-    icon: "⚖️",
+    icon: <Scale className="h-6 w-6 text-brass-500" />,
     title: "True Double-Entry Ledger",
     description:
       "Every transaction posts balanced debits and credits across your chart of accounts. No shortcuts, no approximations — just rock-solid accounting as standard.",
   },
   {
-    icon: "📄",
+    icon: <ReceiptText className="h-6 w-6 text-brass-500" />,
     title: "Invoices & Bills",
     description:
       "Create professional invoices, track payments, manage supplier bills and allocations — all with automatic journal entries posted the moment you save.",
   },
   {
-    icon: "🏦",
+    icon: <Landmark className="h-6 w-6 text-brass-500" />,
     title: "Bank Reconciliation",
     description:
       "Import bank statements via CSV or M-Pesa feed, auto-match transactions against your ledger, and close the period with confidence.",
   },
   {
-    icon: "📊",
+    icon: <ChartNoAxesCombined className="h-6 w-6 text-brass-500" />,
     title: "Real-time Reports",
     description:
       "Profit & Loss, Balance Sheet, Cash Flow statement, and Aged Receivables — generated instantly from live journal data, exportable to PDF or Excel.",
   },
   {
-    icon: "🔒",
+    icon: <ShieldCheck className="h-6 w-6 text-brass-500" />,
     title: "Role-Based Access Control",
     description:
       "Grant bookkeepers read access, give managers approval rights, and keep financial data away from staff who don't need it — per-module permissions.",
   },
   {
-    icon: "🌍",
+    icon: <Globe className="h-6 w-6 text-brass-500" />,
     title: "Multi-Currency & Tax",
     description:
       "Native KES, USD, EUR, and UGX support with live exchange rates. VAT, WHT, and PAYE calculations built in for Kenya, Uganda, and Tanzania.",
   },
+];
+
+const faqs = [
+  {
+    question: "Do I need accounting experience to use LedgerLine?",
+    answer: "No. While LedgerLine is built on professional double-entry principles, our intuitive interfaces for invoicing, bills, and banking automatically handle the complex journal entries behind the scenes. Your accountant will love the data, and you'll love the ease of use."
+  },
+  {
+    question: "How does the M-Pesa integration work?",
+    answer: "You can securely connect your M-Pesa Till or Paybill number. Transactions flow in automatically, and LedgerLine's AI suggests matches against open invoices or standard expense categories to speed up reconciliation."
+  },
+  {
+    question: "Can my external auditor or accountant access my books?",
+    answer: "Yes, you can invite your accountant as a dedicated user with 'Accountant' permissions. They get free access to your workspace to review journals, export reports, and help you close the period."
+  },
+  {
+    question: "Is my data secure?",
+    answer: "Absolutely. We use bank-grade encryption, continuous backups, and strict tenant isolation so your data is never mixed with other organizations. We also provide full audit logs for every change made in your workspace."
+  }
 ];
 
 const testimonials = [
@@ -204,6 +237,47 @@ export default function MarketingPage() {
         </div>
       </section>
 
+      {/* ── Trust Bar ─────────────────────────────────────────────────── */}
+      <section className="trust-section">
+        <div className="marketing-container">
+          <p className="trust-eyebrow">Trusted by forward-thinking businesses across East Africa</p>
+          <div className="trust-logos">
+            <div className="trust-logo">Kijani Grocers</div>
+            <div className="trust-logo">Lakefront Hotels</div>
+            <div className="trust-logo">Coast Logistics</div>
+            <div className="trust-logo">Mara Essentials</div>
+            <div className="trust-logo">Athi River Manufacturing</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── How it works ──────────────────────────────────────────────── */}
+      <section className="how-it-works-section bg-paper-dark">
+        <div className="marketing-container">
+          <div className="section-header">
+            <p className="section-eyebrow">How it works</p>
+            <h2 className="section-title">Automate the busywork, focus on growth</h2>
+          </div>
+          <div className="how-it-works-grid">
+            <div className="step-card">
+              <div className="step-number">1</div>
+              <h3 className="step-title">Connect & Import</h3>
+              <p className="step-description">Link your bank feeds and M-Pesa tills, or upload a CSV. Your financial data flows securely into your workspace.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">2</div>
+              <h3 className="step-title">AI Auto-categorization</h3>
+              <p className="step-description">Our intelligent engine suggests matches for transactions, invoices, and expenses based on your past activity.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">3</div>
+              <h3 className="step-title">Close with Confidence</h3>
+              <p className="step-description">Validate your exact debit-credit trial balance. Generate compliant tax reports and share them with your auditor in one click.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Features ─────────────────────────────────────────────────── */}
       <section id="features" className="features-section">
         <div className="marketing-container">
@@ -314,18 +388,45 @@ export default function MarketingPage() {
       {/* ── Footer ───────────────────────────────────────────────────── */}
       <footer className="marketing-footer">
         <div className="marketing-container footer-inner">
-          <span className="brand footer-brand">
-            <span className="brand-double-rule" aria-hidden="true" />
-            LedgerLine
-          </span>
-          <p className="footer-copy">
-            © {new Date().getFullYear()} LedgerLine Technologies Ltd. Nairobi, Kenya.
-          </p>
-          <nav className="footer-links" aria-label="Footer navigation">
-            <a href="/login">Sign in</a>
-            <a href="/signup">Sign up</a>
-            <a href="mailto:support@ledgerline.app">Support</a>
-          </nav>
+          <div className="footer-brand-col">
+            <span className="brand footer-brand">
+              <span className="brand-double-rule" aria-hidden="true" />
+              LedgerLine
+            </span>
+            <p className="footer-copy">
+              © {new Date().getFullYear()} LedgerLine Technologies Ltd.<br />
+              Nairobi, Kenya.
+            </p>
+          </div>
+          
+          <div className="footer-links-grid">
+            <div className="footer-link-group">
+              <h4 className="footer-link-title">Product</h4>
+              <nav aria-label="Product navigation">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Customers</a>
+                <a href="/catalog">Component Catalog</a>
+              </nav>
+            </div>
+            <div className="footer-link-group">
+              <h4 className="footer-link-title">Company</h4>
+              <nav aria-label="Company navigation">
+                <a href="#">About Us</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+                <a href="mailto:support@ledgerline.app">Support</a>
+              </nav>
+            </div>
+            <div className="footer-link-group">
+              <h4 className="footer-link-title">Legal</h4>
+              <nav aria-label="Legal navigation">
+                <a href="/terms">Terms of Service</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="#">Security</a>
+              </nav>
+            </div>
+          </div>
         </div>
       </footer>
 
@@ -817,32 +918,162 @@ export default function MarketingPage() {
         .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
 
         /* ── Footer ── */
+        /* ── Trust Bar ── */
+        .trust-section {
+          background: var(--paper-dark);
+          padding: 40px 0;
+          border-top: 1px solid var(--slate-light);
+          border-bottom: 1px solid var(--slate-light);
+        }
+        .trust-eyebrow {
+          text-align: center;
+          font-size: 13px;
+          color: var(--slate);
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          margin: 0 0 24px;
+        }
+        .trust-logos {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 40px;
+        }
+        .trust-logo {
+          font-family: Georgia, serif;
+          font-size: 18px;
+          color: var(--slate);
+          opacity: 0.6;
+          font-weight: 700;
+        }
+
+        /* ── How it works ── */
+        .how-it-works-section {
+          padding: 96px 0;
+        }
+        .how-it-works-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 32px;
+        }
+        .step-card {
+          background: var(--white);
+          border: 1px solid var(--slate-light);
+          border-radius: var(--radius);
+          padding: 32px;
+          position: relative;
+        }
+        .step-number {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: var(--brass);
+          color: var(--white);
+          font-weight: 700;
+          font-size: 18px;
+          margin-bottom: 24px;
+        }
+        .step-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: var(--ink);
+          margin: 0 0 12px;
+        }
+        .step-description {
+          font-size: 15px;
+          color: var(--slate);
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        /* ── FAQ ── */
+        .faq-section {
+          padding: 96px 0;
+        }
+        .faq-list {
+          max-width: 768px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .faq-item {
+          background: var(--white);
+          border: 1px solid var(--slate-light);
+          border-radius: var(--radius);
+          overflow: hidden;
+        }
+        .faq-question {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 24px;
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--ink);
+          cursor: pointer;
+          list-style: none;
+        }
+        .faq-question::-webkit-details-marker {
+          display: none;
+        }
+        .faq-answer {
+          padding: 0 24px 24px;
+          font-size: 15px;
+          color: var(--slate);
+          line-height: 1.6;
+        }
+
+        /* ── Footer ── */
         .marketing-footer {
           background: var(--ink);
           border-top: 1px solid rgba(255,255,255,0.08);
-          padding: 28px 0;
+          padding: 64px 0;
         }
         .footer-inner {
           display: flex;
-          align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 16px;
+          gap: 48px;
         }
-        .footer-brand { color: var(--white); }
+        .footer-brand-col {
+          max-width: 280px;
+        }
+        .footer-brand { color: var(--white); margin-bottom: 16px; }
         .footer-brand .brand-double-rule { border-color: var(--brass); }
-        .footer-copy { font-size: 13px; color: rgba(255,255,255,0.45); margin: 0; }
-        .footer-links {
+        .footer-copy { font-size: 13px; color: rgba(255,255,255,0.45); margin: 0; line-height: 1.6; }
+        
+        .footer-links-grid {
           display: flex;
-          gap: 20px;
+          gap: 64px;
+          flex-wrap: wrap;
         }
-        .footer-links a {
-          font-size: 13px;
-          color: rgba(255,255,255,0.55);
+        .footer-link-group {
+          display: flex;
+          flex-direction: column;
+        }
+        .footer-link-title {
+          color: var(--white);
+          font-size: 14px;
+          font-weight: 700;
+          margin: 0 0 20px;
+        }
+        .footer-link-group nav {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .footer-link-group a {
+          font-size: 14px;
+          color: rgba(255,255,255,0.6);
           text-decoration: none;
           transition: color 0.15s;
         }
-        .footer-links a:hover { color: var(--white); }
+        .footer-link-group a:hover { color: var(--white); }
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
