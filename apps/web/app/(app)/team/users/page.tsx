@@ -1,5 +1,9 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { RolesWorkspace } from "@/components/roles-workspace";
 
-export default function Page() {
-  return <ModuleRoutePage moduleKey="team-users" />;
+export const metadata = {
+  title: "Users | LedgerLine"
+};
+
+export default function UsersPage() {
+  return <RolesWorkspace initialTab="users" />;
 }

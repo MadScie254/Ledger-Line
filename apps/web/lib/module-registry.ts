@@ -273,18 +273,7 @@ export const moduleDefinitions = {
     description: "Saved accounts payable aging variants.",
     createLabel: "Create view"
   },
-  "team-users": {
-    moduleKey: "team-users",
-    title: "Users",
-    description: "Team users and access records.",
-    createLabel: "Create user"
-  },
-  "team-roles": {
-    moduleKey: "team-roles",
-    title: "Roles",
-    description: "Role definitions and permission packs.",
-    createLabel: "Create role"
-  },
+
   "team-accountant-access": {
     moduleKey: "team-accountant-access",
     title: "Accountant access",

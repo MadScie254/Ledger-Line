@@ -4,9 +4,10 @@ import { withDatabase } from "@/lib/database";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { roleId: string } }
+  props: { params: Promise<{ roleId: string }> }
 ) {
   try {
+    const { roleId } = await props.params;
     const workspace = await requireWorkspace(request);
     if (isWorkspaceError(workspace)) return workspace;
 
@@ -20,7 +21,7 @@ export async function PATCH(
     const role = await withDatabase(async (prisma) => {
       // Prevent updating system roles
       const existing = await prisma.role.findUnique({
-        where: { id: params.roleId },
+        where: { id: roleId },
       });
 
       if (!existing || existing.orgId !== workspace.orgId) {
@@ -32,7 +33,7 @@ export async function PATCH(
       }
 
       return prisma.role.update({
-        where: { id: params.roleId },
+        where: { id: roleId },
         data: {
           ...(name ? { name } : {}),
           ...(permissions ? { permissions } : {}),
@@ -69,15 +70,16 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { roleId: string } }
+  props: { params: Promise<{ roleId: string }> }
 ) {
   try {
+    const { roleId } = await props.params;
     const workspace = await requireWorkspace(request);
     if (isWorkspaceError(workspace)) return workspace;
 
     await withDatabase(async (prisma) => {
       const existing = await prisma.role.findUnique({
-        where: { id: params.roleId },
+        where: { id: roleId },
         include: {
           _count: { select: { memberships: true } },
         }
@@ -96,7 +98,7 @@ export async function DELETE(
       }
 
       return prisma.role.delete({
-        where: { id: params.roleId },
+        where: { id: roleId },
       });
     });
 
