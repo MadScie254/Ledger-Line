@@ -6,10 +6,15 @@ export const metadata: Metadata = {
   description: "Enterprise accounting, bookkeeping, and business operations for East African companies."
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster position="bottom-right" />
+      </body>
     </html>
   );
 }
