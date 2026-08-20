@@ -246,6 +246,12 @@ function GlobalSearch() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  const { data } = useQuery({
+    queryKey: ["search-recent"],
+    queryFn: () => fetch("/api/search/recent").then((res) => res.json()),
+  });
+  const recent = data?.recent || [];
+
   // ⌘K / Ctrl+K
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -259,12 +265,18 @@ function GlobalSearch() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const filtered = query.length > 0
+  const navFiltered = query.length > 0
     ? navigation
         .flatMap((item) => [item, ...(item.children ?? [])])
         .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 6)
     : [];
+
+  const recentFiltered = query.length > 0
+    ? recent
+        .filter((item: any) => item.title.toLowerCase().includes(query.toLowerCase()) || item.subtitle.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 4)
+    : recent.slice(0, 5);
 
   function handleSelect(href: string) {
     router.push(href);
@@ -283,10 +295,13 @@ function GlobalSearch() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => setFocused(true)}
-        onBlur={() => setTimeout(() => setFocused(false), 150)}
+        onBlur={() => setTimeout(() => setFocused(false), 200)}
         onKeyDown={(e) => {
           if (e.key === "Escape") { setQuery(""); inputRef.current?.blur(); }
-          if (e.key === "Enter" && filtered.length > 0) handleSelect(filtered[0]!.href);
+          if (e.key === "Enter") {
+            if (navFiltered.length > 0) handleSelect(navFiltered[0]!.href);
+            else if (recentFiltered.length > 0) handleSelect(recentFiltered[0]!.href);
+          }
         }}
         placeholder="Navigate. Find transactions, contacts, reports..."
         className="h-10 w-full rounded-[6px] border border-slate-200 bg-white pl-10 pr-10 text-sm text-ink-900 shadow-sm outline-none transition focus:border-focus-blue-500 focus:ring-2 focus:ring-focus-blue-500/20"
@@ -295,22 +310,47 @@ function GlobalSearch() {
         <Command className="h-3 w-3" />K
       </kbd>
 
-      {focused && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-ledger-deep">
-          {filtered.map((item) => (
-            <button
-              key={item.href}
-              className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-ink-900 hover:bg-paper-100 focus-ring"
-              onMouseDown={() => handleSelect(item.href)}
-            >
-              {"icon" in item && item.icon ? (
-                <item.icon className="h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
-              ) : (
-                <span className="h-4 w-4" />
-              )}
-              <span className="truncate">{item.title}</span>
-            </button>
-          ))}
+      {focused && (navFiltered.length > 0 || recentFiltered.length > 0) && (
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-ledger-deep py-2">
+          {navFiltered.length > 0 && (
+            <div className="mb-2">
+              <div className="px-4 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Navigation</div>
+              {navFiltered.map((item) => (
+                <button
+                  key={item.href}
+                  className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-ink-900 hover:bg-paper-100 focus-ring"
+                  onMouseDown={() => handleSelect(item.href)}
+                >
+                  {item.icon ? (
+                    <item.icon className="h-4 w-4 text-slate-400 shrink-0" aria-hidden="true" />
+                  ) : (
+                    <span className="h-4 w-4 shrink-0" />
+                  )}
+                  {item.title}
+                </button>
+              ))}
+            </div>
+          )}
+          {recentFiltered.length > 0 && (
+            <div>
+              <div className="px-4 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                {query.length > 0 ? "Records" : "Recent Records"}
+              </div>
+              {recentFiltered.map((item: any) => (
+                <button
+                  key={item.id}
+                  className="flex w-full items-center justify-between gap-3 px-4 py-2 text-left text-sm text-ink-900 hover:bg-paper-100 focus-ring"
+                  onMouseDown={() => handleSelect(item.href)}
+                >
+                  <div>
+                    <div className="font-medium">{item.title}</div>
+                    <div className="text-xs text-slate-500">{item.subtitle}</div>
+                  </div>
+                  <div className="text-xs text-slate-400 capitalize">{item.type}</div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

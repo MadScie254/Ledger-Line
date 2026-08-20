@@ -11,7 +11,7 @@ interface EntityRouteContext {
   params: Promise<{ entity: string }>;
 }
 
-type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "expenses" | "payments" | "sales-receipts" | "sales-orders";
+type EntityKey = "customers" | "vendors" | "items" | "invoices" | "bills" | "expenses" | "payments" | "sales-receipts" | "sales-orders" | "etims-logs";
 
 export async function GET(request: Request, context: EntityRouteContext) {
   try {
@@ -177,6 +177,16 @@ async function listEntityRecords(prisma: PrismaClient, orgId: string, entity: En
         createdAt: new Date().toISOString(),
         metadata: { fulfillmentStatus: row.fulfillmentStatus ?? "Pending" }
       }));
+    }
+    case "etims-logs": {
+      // Mocked eTIMS logs
+      return [
+        { id: "log-1", title: "Transmission Success", subtitle: "Invoice 105", status: "Success", amountMinor: 0, createdAt: new Date(Date.now() - 1000 * 60).toISOString(), metadata: { error: null } },
+        { id: "log-2", title: "Transmission Success", subtitle: "Invoice 104", status: "Success", amountMinor: 0, createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(), metadata: { error: null } },
+        { id: "log-3", title: "Transmission Failed", subtitle: "Invoice 103", status: "Failed", amountMinor: 0, createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), metadata: { error: "KRA PIN Invalid" } },
+        { id: "log-4", title: "Transmission Success", subtitle: "Receipt RC-001", status: "Success", amountMinor: 0, createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), metadata: { error: null } },
+        { id: "log-5", title: "Transmission Success", subtitle: "Invoice 102", status: "Success", amountMinor: 0, createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(), metadata: { error: null } },
+      ];
     }
     default:
       throw new Error("Entity route is not registered.");
