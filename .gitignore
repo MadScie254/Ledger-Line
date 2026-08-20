@@ -34,3 +34,8 @@ Thumbs.db
 drift.txt
 pulled.prisma
 /scratch/
+
+*.log
+drift.txt
+pulled.prisma
+/scratch/
