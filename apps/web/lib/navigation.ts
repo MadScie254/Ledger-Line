@@ -136,6 +136,11 @@ export const navigation: NavItem[] = [
     ]
   },
   {
+    title: "Analytics",
+    href: "/analytics",
+    icon: ChartNoAxesCombined,
+  },
+  {
     title: "Reports",
     href: "/reports",
     icon: FileBarChart2,
