@@ -1,5 +1,6 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { CompanySettingsWorkspace } from "@/components/company-settings-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="settings-company" />;
+  return <CompanySettingsWorkspace />;
 }
+

@@ -1,5 +1,6 @@
-﻿import { ModuleRoutePage } from "@/components/module-route-page";
+import { CashFlowWorkspace } from "@/components/cash-flow-workspace";
 
 export default function Page() {
-  return <ModuleRoutePage moduleKey="reports-cash-flow" />;
+  return <CashFlowWorkspace />;
 }
+

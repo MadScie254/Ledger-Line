@@ -14,7 +14,7 @@ const accounts: Account[] = [
     orgId: "org",
     code: "1000",
     name: "Cash and bank",
-    type: "asset",
+    type: "ASSET",
     currency: "KES",
     isActive: true
   },
@@ -23,7 +23,7 @@ const accounts: Account[] = [
     orgId: "org",
     code: "1200",
     name: "Accounts receivable",
-    type: "asset",
+    type: "ASSET",
     currency: "KES",
     isActive: true
   },
@@ -32,7 +32,7 @@ const accounts: Account[] = [
     orgId: "org",
     code: "4000",
     name: "Service revenue",
-    type: "income",
+    type: "INCOME",
     currency: "KES",
     isActive: true
   },
@@ -41,7 +41,7 @@ const accounts: Account[] = [
     orgId: "org",
     code: "6100",
     name: "Operating expense",
-    type: "expense",
+    type: "EXPENSE",
     currency: "KES",
     isActive: true
   }
