@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { DoubleRule } from "@ledgerline/ui";
 import { formatMoneyMinor } from "@ledgerline/ledger-service";
+import { useQuery } from "@tanstack/react-query";
+import { TrendLineChart, ProfitComparison } from "@/components/dashboard-charts";
 
 interface DashboardData {
   kpis: {
@@ -38,6 +40,11 @@ export default function DashboardPage() {
         setLoading(false);
       });
   }, []);
+
+  const { data: analyticsData } = useQuery({
+    queryKey: ["analytics"],
+    queryFn: () => fetch("/api/analytics").then((res) => res.json()),
+  });
 
   if (loading) {
     return (
@@ -88,6 +95,19 @@ export default function DashboardPage() {
           </p>
         </article>
       </section>
+
+      {analyticsData?.data && (
+        <section className="mt-8 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-ledger">
+            <h2 className="text-base font-semibold text-ink-900 mb-4">Revenue & Expenses Trend</h2>
+            <TrendLineChart data={analyticsData.data} />
+          </div>
+          <div className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-ledger">
+            <h2 className="text-base font-semibold text-ink-900 mb-4">Profit Comparison</h2>
+            <ProfitComparison data={analyticsData.data} />
+          </div>
+        </section>
+      )}
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-ink-900">Recent Activity</h2>

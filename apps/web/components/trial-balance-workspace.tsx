@@ -2,7 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { formatMoneyMinor } from "@ledgerline/ledger-service";
-import { DataTable, StatusPill } from "@ledgerline/ui";
+import { DataTable, StatusPill, Button } from "@ledgerline/ui";
+import { downloadCsv, downloadPdf } from "@/lib/export";
+import { Download } from "lucide-react";
 
 interface Account {
   id: string;
@@ -55,9 +57,34 @@ export function TrialBalanceWorkspace() {
           <h1 className="text-2xl font-bold text-ink-900 font-serif">Trial Balance</h1>
           <p className="text-sm text-slate-500">A snapshot of all account balances</p>
         </div>
-        <StatusPill tone={data.isBalanced ? "success" : "danger"}>
-          {data.isBalanced ? "Balanced" : "Unbalanced"}
-        </StatusPill>
+        <div className="flex items-center gap-4">
+          <StatusPill tone={data.isBalanced ? "success" : "danger"}>
+            {data.isBalanced ? "Balanced" : "Unbalanced"}
+          </StatusPill>
+          <div className="flex gap-2 border-l border-slate-200 pl-4">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                const headers = ["Code", "Account", "Type", "Debit", "Credit"];
+                const rows = data.rows.map(r => [
+                  r.account.code,
+                  r.account.name,
+                  r.account.type,
+                  (r.debitMinor / 100).toFixed(2),
+                  (r.creditMinor / 100).toFixed(2)
+                ]);
+                downloadCsv("Trial_Balance", headers, rows);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              CSV
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => downloadPdf()}>
+              PDF
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 rounded-[10px] border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">

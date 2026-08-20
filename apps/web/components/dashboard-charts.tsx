@@ -79,23 +79,38 @@ export function ExpenseDonut({ data, currency = "KES" }: { data: ExpensePoint[];
   );
 }
 
-export function ProfitComparison({ currency = "KES" }: { currency?: string }) {
-  const data = [
-    { label: "Prior", income: 1840, expense: 1320 },
-    { label: "Current", income: 1942, expense: 1665 }
-  ];
-
+export function ProfitComparison({ data, currency = "KES" }: { data: any[]; currency?: string }) {
   return (
     <div className="h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 6, right: 18, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#D9DEE6" strokeDasharray="4 4" vertical={false} />
-          <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
+          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
           <YAxis tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
-          <Tooltip formatter={(value) => `${currency} ${Number(value).toLocaleString()}k`} />
-          <Bar dataKey="income" name="Income" fill="#0F5132" radius={[4, 4, 0, 0]} />
+          <Tooltip formatter={(value) => `${currency} ${Number(value).toLocaleString()}`} />
+          <Bar dataKey="revenue" name="Revenue" fill="#0F5132" radius={[4, 4, 0, 0]} />
           <Bar dataKey="expense" name="Expenses" fill="#A23E1D" radius={[4, 4, 0, 0]} />
         </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+import { LineChart, Line } from "recharts";
+
+export function TrendLineChart({ data, currency = "KES" }: { data: any[]; currency?: string }) {
+  return (
+    <div className="h-[220px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data} margin={{ top: 6, right: 18, bottom: 0, left: 0 }}>
+          <CartesianGrid stroke="#D9DEE6" strokeDasharray="4 4" vertical={false} />
+          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
+          <YAxis tickLine={false} axisLine={false} tick={{ fill: "#5B6472", fontSize: 12 }} />
+          <Tooltip formatter={(value) => `${currency} ${Number(value).toLocaleString()}`} />
+          <Legend iconType="circle" />
+          <Line type="monotone" dataKey="revenue" name="Revenue" stroke="#0F5132" strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="expense" name="Expenses" stroke="#A23E1D" strokeWidth={2} dot={false} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
