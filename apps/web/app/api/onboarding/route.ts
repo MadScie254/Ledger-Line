@@ -138,8 +138,10 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error("Failed to update user metadata with orgId:", updateError);
-      // We don't fail the request here, but the user might need to sign in again or retry
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
+
+    await supabase.auth.refreshSession();
 
     return NextResponse.json({ success: true, orgId });
   } catch (error: any) {
